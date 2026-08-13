@@ -1,0 +1,279 @@
+/**
+ * Badge styles.
+ *
+ * Each variant only declares four local custom properties; the type modifiers
+ * below decide which of them become background, text and border. Adding a
+ * variant therefore never requires adding a type rule.
+ */
+
+.ds-badge {
+  --badge-solid-bg: var(--ds-color-black);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-grey-100);
+  --badge-soft-fg: var(--ds-color-black);
+  --badge-line: var(--ds-color-grey-300);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0;
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  font-family: var(--ds-font-family);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: middle;
+  transition:
+    background-color var(--ds-duration-fast) var(--ds-easing-standard),
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+/* ---------------------------------------------------------------- Sizes --- */
+
+.ds-badge--medium {
+  min-height: 24px;
+  padding: 0 var(--ds-space-100);
+  gap: var(--ds-space-50);
+  font-size: var(--ds-font-size-300);
+  --badge-icon-size: 14px;
+}
+
+.ds-badge--small {
+  min-height: 20px;
+  padding: 0 var(--ds-space-75);
+  gap: var(--ds-space-50);
+  font-size: var(--ds-font-size-200);
+  border-radius: var(--ds-radius-sm);
+  --badge-icon-size: 12px;
+}
+
+.ds-badge--xsmall {
+  min-height: 16px;
+  padding: 0 var(--ds-space-50);
+  gap: var(--ds-space-25);
+  font-size: var(--ds-font-size-100);
+  border-radius: var(--ds-radius-xs);
+  --badge-icon-size: 10px;
+}
+
+/* --------------------------------------------------------------- Layout --- */
+
+.ds-badge__label {
+  display: block;
+  min-width: 0;
+}
+
+.ds-badge--truncate .ds-badge__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-badge--full-width {
+  display: flex;
+  width: 100%;
+}
+
+.ds-badge__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--badge-icon-size);
+  height: var(--badge-icon-size);
+}
+
+.ds-badge__icon > svg,
+.ds-badge__icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------------------------------------------------------------- Types --- */
+
+.ds-badge--solid {
+  background-color: var(--badge-solid-bg);
+  color: var(--badge-solid-fg);
+  border-color: var(--badge-solid-border, var(--badge-solid-bg));
+}
+
+.ds-badge--subtle {
+  background-color: var(--badge-soft-bg);
+  color: var(--badge-soft-fg);
+  border-color: var(--badge-soft-bg);
+}
+
+.ds-badge--outlined {
+  background-color: transparent;
+  color: var(--badge-outline-fg, var(--badge-soft-fg));
+  border-color: var(--badge-line);
+}
+
+/* --------------------------------------------------------------- States --- */
+
+.ds-badge--interactive {
+  cursor: pointer;
+  appearance: none;
+}
+
+.ds-badge--interactive:hover {
+  background-color: var(--badge-hover-bg, var(--badge-soft-bg));
+}
+
+.ds-badge--solid.ds-badge--interactive:hover {
+  --badge-hover-bg: var(--badge-solid-bg-hover, var(--badge-solid-bg));
+  border-color: var(--badge-hover-bg);
+}
+
+.ds-badge--interactive:focus-visible {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: var(--ds-focus-ring-offset);
+}
+
+.ds-badge--disabled {
+  background-color: var(--badge-soft-bg);
+  color: var(--badge-soft-fg);
+  border-color: var(--badge-soft-bg);
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ds-badge--outlined.ds-badge--disabled {
+  background-color: transparent;
+  border-color: var(--badge-line);
+}
+
+/* ---------------------------------------------------------------- Ghost --- */
+
+.ds-badge--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  padding: 0;
+  min-width: 64px;
+  overflow: hidden;
+}
+
+.ds-badge__shimmer {
+  display: block;
+  width: 100%;
+  align-self: stretch;
+  min-height: inherit;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    90deg,
+    var(--ds-color-grey-200) 0%,
+    var(--ds-color-grey-100) 40%,
+    var(--ds-color-grey-200) 80%
+  );
+  background-size: 200% 100%;
+  animation: ds-badge-shimmer 1.4s var(--ds-easing-standard) infinite;
+}
+
+@keyframes ds-badge-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-badge__shimmer {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------- Variants --- */
+
+.ds-badge--black {
+  --badge-solid-bg: var(--ds-color-black);
+  --badge-solid-bg-hover: var(--ds-color-black-hover);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-grey-100);
+  --badge-soft-fg: var(--ds-color-black);
+  --badge-line: var(--ds-color-grey-300);
+}
+
+/* White sits on dark surfaces, so its solid needs a hairline to stay legible
+   on light ones and its outline is intentionally invisible on white. */
+.ds-badge--white {
+  --badge-solid-bg: var(--ds-color-white);
+  --badge-solid-border: var(--ds-color-grey-200);
+  --badge-solid-bg-hover: var(--ds-color-grey-50);
+  --badge-solid-fg: var(--ds-color-black);
+  --badge-soft-bg: var(--ds-color-grey-200);
+  --badge-soft-fg: var(--ds-color-grey-600);
+  --badge-outline-fg: var(--ds-color-white);
+  --badge-line: var(--ds-color-white);
+}
+
+.ds-badge--coal {
+  --badge-solid-bg: var(--ds-color-coal-500);
+  --badge-solid-bg-hover: var(--ds-color-coal-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-coal-50);
+  --badge-soft-fg: var(--ds-color-coal-700);
+  --badge-line: var(--ds-color-coal-200);
+}
+
+.ds-badge--dlvRed {
+  --badge-solid-bg: var(--ds-color-dlv-red-500);
+  --badge-solid-bg-hover: var(--ds-color-dlv-red-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-dlv-red-50);
+  --badge-soft-fg: var(--ds-color-dlv-red-700);
+  --badge-line: var(--ds-color-dlv-red-200);
+}
+
+.ds-badge--info {
+  --badge-solid-bg: var(--ds-color-info-500);
+  --badge-solid-bg-hover: var(--ds-color-info-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-info-50);
+  --badge-soft-fg: var(--ds-color-info-700);
+  --badge-line: var(--ds-color-info-200);
+}
+
+.ds-badge--success {
+  --badge-solid-bg: var(--ds-color-success-500);
+  --badge-solid-bg-hover: var(--ds-color-success-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-success-50);
+  --badge-soft-fg: var(--ds-color-success-700);
+  --badge-line: var(--ds-color-success-200);
+}
+
+/* Warning yellow cannot carry white text at 4.5:1, so it keeps dark text. */
+.ds-badge--warning {
+  --badge-solid-bg: var(--ds-color-warning-500);
+  --badge-solid-bg-hover: var(--ds-color-warning-600);
+  --badge-solid-fg: var(--ds-color-black);
+  --badge-soft-bg: var(--ds-color-warning-50);
+  --badge-soft-fg: var(--ds-color-warning-700);
+  --badge-line: var(--ds-color-warning-200);
+}
+
+.ds-badge--error {
+  --badge-solid-bg: var(--ds-color-error-500);
+  --badge-solid-bg-hover: var(--ds-color-error-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-error-50);
+  --badge-soft-fg: var(--ds-color-error-700);
+  --badge-line: var(--ds-color-error-200);
+}
+
+.ds-badge--cardbox {
+  --badge-solid-bg: var(--ds-color-cardbox-500);
+  --badge-solid-bg-hover: var(--ds-color-cardbox-600);
+  --badge-solid-fg: var(--ds-color-white);
+  --badge-soft-bg: var(--ds-color-cardbox-50);
+  --badge-soft-fg: var(--ds-color-cardbox-700);
+  --badge-line: var(--ds-color-cardbox-200);
+}
