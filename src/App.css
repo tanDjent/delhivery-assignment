@@ -1,149 +1,410 @@
-.page {
-  max-width: 1100px;
+/* Documentation site chrome. None of this ships with the design system. */
+
+.docs {
+  max-width: 880px;
   margin: 0 auto;
-  padding: 56px 24px 96px;
+  padding: 64px 24px 120px;
 }
 
-.page__eyebrow {
+.docs__title {
   margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ds-color-dlv-red-500);
-}
-
-.page__title {
-  margin: 8px 0 0;
-  font-size: 40px;
+  font-size: 36px;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-.page__lead {
-  margin: 12px 0 0;
-  max-width: 62ch;
-  color: var(--ds-color-grey-600);
+.docs__panel {
+  margin-top: 32px;
 }
 
-.section {
-  margin-top: 56px;
-  padding-top: 32px;
-  border-top: 1px solid var(--ds-color-grey-200);
+/* ------------------------------------------------------------------ Tabs --- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
 }
 
-.section__title {
-  margin: 0 0 16px;
-  font-size: 20px;
+.tabs__tab {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--ds-color-grey-500);
+  transition: color 120ms ease;
+}
+
+.tabs__tab:hover {
+  color: var(--ds-color-black);
+}
+
+.tabs__tab--active {
+  color: var(--ds-color-black);
+}
+
+.tabs__tab:focus-visible {
+  outline: 2px solid var(--ds-color-info-500);
+  outline-offset: 2px;
+  border-radius: var(--ds-radius-sm);
+}
+
+.tabs--page {
+  margin-top: 20px;
+  border-bottom: 1px solid var(--ds-color-grey-200);
+}
+
+.tabs--page .tabs__tab {
+  padding: 10px 12px;
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tabs--page .tabs__tab--active {
+  border-bottom-color: var(--ds-color-dlv-red-500);
   font-weight: 600;
 }
 
-.section__note {
-  margin: -8px 0 16px;
-  color: var(--ds-color-grey-600);
-  font-size: 14px;
+.tabs--panel {
+  padding: 0 8px;
+  border-bottom: 1px solid var(--ds-color-grey-200);
 }
 
-.section__note code,
-.anatomy__legend code {
-  padding: 1px 5px;
-  border-radius: var(--ds-radius-sm);
-  background: var(--ds-color-grey-100);
-  font-size: 0.9em;
+.tabs--panel .tabs__tab {
+  padding: 9px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+.tabs--panel .tabs__tab--active {
+  border-bottom-color: var(--ds-color-black);
 }
 
-.row--stacked {
-  flex-direction: column;
-  align-items: flex-start;
-}
+/* --------------------------------------------------------- Display areas --- */
 
-.row--dark {
-  padding: 20px;
-  border-radius: 8px;
-  background: var(--ds-color-black);
-}
-
-.clamp {
-  width: 220px;
-}
-
-.anatomy {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
+.display {
+  padding: 40px 24px;
   border: 1px solid var(--ds-color-grey-200);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--ds-color-grey-50);
 }
 
-.anatomy__legend {
-  margin: 16px 0 0;
-  padding-left: 20px;
-  color: var(--ds-color-grey-600);
+.display__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Fixed width so fullWidth and truncate have something to resolve against. */
+.display__frame {
+  width: 320px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.display__hint {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ds-color-grey-500);
+}
+
+/* -------------------------------------------------------------- Sections --- */
+
+.section {
+  margin-top: 56px;
+}
+
+.section__title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.section__subtitle {
+  margin: 0 0 24px;
+  color: var(--ds-color-grey-500);
   font-size: 14px;
-  line-height: 1.9;
 }
 
-/* ------------------------------------------------------------ The matrix --- */
+.section__body {
+  margin: 16px 0 0;
+  max-width: 68ch;
+  color: var(--ds-color-grey-600);
+}
 
-.matrix-scroll {
+.section__body + .code {
+  margin-top: 24px;
+}
+
+/* ------------------------------------------------------------ Code block --- */
+
+.code {
+  position: relative;
+  border-radius: 8px;
+  background: var(--ds-color-black);
+  overflow: hidden;
+}
+
+.code__pre {
+  margin: 0;
+  padding: 16px 76px 16px 18px;
   overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #e6edf3;
+  tab-size: 2;
 }
 
-.matrix {
+.code--inline .code__pre {
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+.code__copy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--ds-radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e6edf3;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.code__copy:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* -------------------------------------------------- Best practices table --- */
+
+.practices {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  margin-top: 20px;
+  text-align: left;
 }
 
-.matrix th,
-.matrix td {
-  padding: 12px 16px;
+.practices th {
+  padding: 0 16px 10px 0;
+  border-bottom: 1px solid var(--ds-color-grey-200);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ds-color-grey-500);
+}
+
+.practices td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--ds-color-grey-100);
+  vertical-align: middle;
+}
+
+.practices td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.practices__text {
+  color: var(--ds-color-grey-600);
+  font-size: 14px;
+}
+
+/* ---------------------------------------------------------- Example card --- */
+
+.example {
+  margin-top: 28px;
+}
+
+.example__title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.example__card {
+  border: 1px solid var(--ds-color-grey-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.example__preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 44px 24px;
+  background: var(--ds-color-grey-50);
+  border-bottom: 1px solid var(--ds-color-grey-200);
+}
+
+.example__footer {
+  background: var(--ds-color-white);
+}
+
+.example__panel {
+  padding: 18px;
+}
+
+.example__description {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--ds-color-grey-600);
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------ Props table --- */
+
+.props {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.props th {
+  padding: 0 16px 10px 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ds-color-grey-500);
+}
+
+.props td {
+  padding: 10px 16px 10px 0;
+  vertical-align: middle;
+}
+
+.props tbody tr:nth-child(odd) {
+  background: var(--ds-color-grey-50);
+}
+
+.props th:first-child,
+.props td:first-child {
+  padding-left: 12px;
+  border-radius: var(--ds-radius-md) 0 0 var(--ds-radius-md);
+}
+
+.props td:last-child {
+  border-radius: 0 var(--ds-radius-md) var(--ds-radius-md) 0;
+}
+
+.props__name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.matrix td {
-  border-left: 1px dashed var(--ds-color-grey-200);
+.props__values {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--ds-color-grey-500);
+  line-height: 1.5;
 }
 
-.matrix thead th {
-  border-bottom: 1px solid var(--ds-color-grey-300);
-  vertical-align: bottom;
+.props__control {
+  width: 1%;
+  white-space: nowrap;
 }
 
-.matrix__corner {
-  text-align: center;
+.props__code {
+  margin-top: 28px;
 }
 
-.matrix__variant {
-  text-align: right;
+/* --------------------------------------------------------------- Controls --- */
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.control__hidden-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.control__select,
+.control__input {
+  min-width: 132px;
+  padding: 6px 8px;
+  border: 1px solid var(--ds-color-grey-300);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-white);
+  font-family: inherit;
+  font-size: 13px;
   color: var(--ds-color-black);
-  vertical-align: middle;
 }
 
-.matrix__size {
-  text-align: right;
-  font-weight: 500;
-  color: var(--ds-color-cardbox-600);
+.control__select:focus-visible,
+.control__input:focus-visible,
+.switch__input:focus-visible + .switch__track {
+  outline: 2px solid var(--ds-color-info-500);
+  outline-offset: 1px;
 }
 
-.matrix__row--group > * {
-  border-top: 1px solid var(--ds-color-grey-200);
+.switch__input {
+  position: absolute;
+  opacity: 0;
+  width: 36px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
 }
 
-.matrix__meta {
-  display: block;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--ds-color-grey-400);
+.switch__track {
+  display: inline-flex;
+  align-items: center;
+  width: 36px;
+  height: 20px;
+  padding: 2px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-grey-300);
+  transition: background-color 140ms ease;
+}
+
+.switch__thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-white);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.2);
+  transition: transform 140ms ease;
+}
+
+.switch__input:checked + .switch__track {
+  background: var(--ds-color-success-500);
+}
+
+.switch__input:checked + .switch__track .switch__thumb {
+  transform: translateX(16px);
+}
+
+.switch__value {
+  min-width: 34px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--ds-color-grey-500);
 }
