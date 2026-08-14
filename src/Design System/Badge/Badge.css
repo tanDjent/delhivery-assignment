@@ -45,21 +45,18 @@
   height: 20px;
   padding: var(--ds-space-4);
   font-size: var(--badge-font-size-small);
-  --badge-icon-size: 12px;
 }
 
 .ds-badge--medium {
   height: 24px;
   padding: var(--ds-space-6);
   font-size: var(--badge-font-size-medium);
-  --badge-icon-size: 14px;
 }
 
 .ds-badge--large {
   height: 28px;
   padding: var(--ds-space-6);
   font-size: var(--badge-font-size-large);
-  --badge-icon-size: 16px;
 }
 
 /* --------------------------------------------------------------- Layout --- */
@@ -68,13 +65,14 @@
   display: block;
 }
 
+/* 1em keeps the icon locked to the label size at every step. */
 .ds-badge__icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: var(--badge-icon-size);
-  height: var(--badge-icon-size);
+  width: 1em;
+  height: 1em;
 }
 
 .ds-badge__icon > svg,
