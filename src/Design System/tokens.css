@@ -1,13 +1,16 @@
 /**
- * Design system primitives.
+ * GENERATED FILE — DO NOT EDIT.
+ *
+ * Source: tokens.json
+ * Regenerate: npm run tokens:build
  *
  * Component styles must only reference the semantic `--ds-*` names below so a
  * palette change never requires touching component CSS.
  */
 
 :root {
-  /* --------------------------------------------------------------- Spacing --
-   * Named by value: --ds-space-6 is 6px. */
+  /* ----------------------------------------------------------------- Spacing -- */
+  /* Named by value: space.6 is 6px. */
   --ds-space-0: 0px;
   --ds-space-2: 2px;
   --ds-space-4: 4px;
@@ -24,9 +27,8 @@
   --ds-space-64: 64px;
   --ds-space-80: 80px;
 
-  /* ------------------------------------------------------- Variant colours --
-   * Background and text pairs supplied by design, one per variant. These drive
-   * the solid type. */
+  /* --------------------------------------------------------- Variant colours -- */
+  /* Background and text pairs supplied by design, one per variant. These drive the solid type. */
   --ds-variant-black-bg: #000000;
   --ds-variant-black-text: #e6e6e6;
 
@@ -42,22 +44,23 @@
   --ds-variant-info-bg: #2396fb;
   --ds-variant-info-text: #f2f2f2;
 
-  --ds-variant-error-bg: #dc143c;
-  --ds-variant-error-text: #f2f2f2;
-
   --ds-variant-success-bg: #1ba86e;
   --ds-variant-success-text: #f2f2f2;
 
   --ds-variant-warning-bg: #f5c828;
   --ds-variant-warning-text: #7b6414;
 
+  --ds-variant-error-bg: #dc143c;
+  --ds-variant-error-text: #f2f2f2;
+
   --ds-variant-cardbox-bg: #b88b5c;
   --ds-variant-cardbox-text: #e6e6e6;
 
-  /* Presence indicator */
+  /* -------------------------------------------------------------- Status dot -- */
+  /* Presence indicator. */
   --ds-status-dot-color: #1ba86e;
 
-  /* ------------------------------------------------------------- Neutrals -- */
+  /* ----------------------------------------------------------------- Palette -- */
   --ds-color-black: #101828;
   --ds-color-white: #ffffff;
   --ds-color-grey-50: #f9fafb;
@@ -67,55 +70,45 @@
   --ds-color-grey-400: #98a2b3;
   --ds-color-grey-500: #667085;
   --ds-color-grey-600: #475467;
-
-  /* ------------------------------------------- Tint ramps for light types --
-   * Used by the subtle and outlined types. */
   --ds-color-coal-50: #eef1f8;
   --ds-color-coal-200: #c6cde3;
   --ds-color-coal-700: #3a4462;
-
   --ds-color-dlv-red-50: #fdebec;
   --ds-color-dlv-red-200: #f7c2c5;
   --ds-color-dlv-red-500: #e1252c;
   --ds-color-dlv-red-700: #9e161c;
-
   --ds-color-info-50: #eaf4fd;
   --ds-color-info-200: #bcdcf8;
   --ds-color-info-500: #1a7fd4;
   --ds-color-info-700: #10507f;
-
   --ds-color-success-50: #e7f6ef;
   --ds-color-success-200: #b3e3cd;
   --ds-color-success-500: #0f8a5f;
   --ds-color-success-700: #08543a;
-
   --ds-color-warning-50: #fdf5e0;
   --ds-color-warning-200: #f8e3a8;
   --ds-color-warning-700: #8a6d00;
-
   --ds-color-error-50: #fdeaef;
   --ds-color-error-200: #f8bfd0;
   --ds-color-error-700: #85103b;
-
   --ds-color-cardbox-50: #f7f0e6;
   --ds-color-cardbox-200: #e5d0b0;
   --ds-color-cardbox-700: #6b4f2d;
 
-  /* ----------------------------------------------------------- Typography -- */
-  --ds-font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, Helvetica, Arial, sans-serif;
+  /* -------------------------------------------------------------- Typography -- */
+  --ds-font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --ds-font-weight-medium: 500;
   --ds-font-weight-semibold: 600;
 
-  /* -------------------------------------------------------------- Radius -- */
+  /* ------------------------------------------------------------------ Radius -- */
   --ds-radius-sm: 3px;
   --ds-radius-md: 4px;
   --ds-radius-full: 999px;
 
-  /* ------------------------------------------------------------- Borders -- */
+  /* ----------------------------------------------------------------- Borders -- */
   --ds-border-width: 1px;
 
-  /* --------------------------------------------------------------- Motion -- */
+  /* ------------------------------------------------------------------ Motion -- */
   --ds-duration-fast: 120ms;
   --ds-easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
 }

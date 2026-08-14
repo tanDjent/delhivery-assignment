@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Fail the build if a generated file was edited by hand, or if its source
+      # changed without the output being regenerated.
+      - name: Tokens are in sync with tokens.json
+        run: npm run tokens:check
+
+      - name: Docs are in sync with the component metadata
+        run: npm run docs:check
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      # The agent eval output is checked against the real component types, so a
+      # breaking API change surfaces as a failing eval.
+      - name: Agent eval output still typechecks
+        run: npm run eval:check

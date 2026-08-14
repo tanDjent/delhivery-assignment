@@ -1,0 +1,85 @@
+.shipment-list {
+  /* Row type sizes are used only here, so they stay local rather than becoming tokens. */
+  --shipment-list-font-size-title: 16px;
+  --shipment-list-font-size: 14px;
+  --shipment-list-font-size-small: 12px;
+
+  font-family: var(--ds-font-family);
+  color: var(--ds-color-black);
+}
+
+.shipment-list__title {
+  margin: var(--ds-space-0);
+  margin-bottom: var(--ds-space-4);
+  font-size: var(--shipment-list-font-size-title);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.shipment-list__status-region {
+  margin: var(--ds-space-0);
+  margin-bottom: var(--ds-space-12);
+  font-size: var(--shipment-list-font-size-small);
+  color: var(--ds-color-grey-500);
+}
+
+.shipment-list__rows {
+  margin: var(--ds-space-0);
+  padding: var(--ds-space-0);
+  list-style: none;
+  border: var(--ds-border-width) solid var(--ds-color-grey-200);
+  border-radius: var(--ds-radius-md);
+  background-color: var(--ds-color-white);
+}
+
+.shipment-list__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 1.3fr) minmax(0, 1.4fr);
+  gap: var(--ds-space-16);
+  align-items: start;
+  padding: var(--ds-space-12) var(--ds-space-16);
+}
+
+.shipment-list__row + .shipment-list__row {
+  border-top: var(--ds-border-width) solid var(--ds-color-grey-100);
+}
+
+.shipment-list__cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-8);
+  align-items: center;
+  min-width: 0;
+  font-size: var(--shipment-list-font-size);
+}
+
+.shipment-list__cell--status {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ds-space-4);
+}
+
+.shipment-list__awb {
+  font-weight: var(--ds-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.shipment-list__destination,
+.shipment-list__courier {
+  overflow-wrap: anywhere;
+}
+
+.shipment-list__destination {
+  color: var(--ds-color-grey-600);
+}
+
+.shipment-list__note {
+  font-size: var(--shipment-list-font-size-small);
+  color: var(--ds-color-grey-600);
+}
+
+@media (max-width: 720px) {
+  .shipment-list__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ds-space-6);
+  }
+}

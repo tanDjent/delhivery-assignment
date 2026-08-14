@@ -23,7 +23,7 @@
   justify-content: center;
   box-sizing: border-box;
   max-width: 100%;
-  margin: 0;
+  margin: var(--ds-space-0);
   gap: var(--ds-space-2);
   border: var(--ds-border-width) solid transparent;
   border-radius: var(--ds-radius-md);
@@ -129,7 +129,7 @@
 .ds-badge--ghost {
   background-color: transparent;
   border-color: transparent;
-  padding: 0;
+  padding: var(--ds-space-0);
   min-width: 64px;
   overflow: hidden;
 }

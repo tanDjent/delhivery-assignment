@@ -3,10 +3,13 @@ import type { BadgeProps } from './Badge.types'
 import './Badge.css'
 
 /**
- * Badge — a compact marker for status, category or count.
+ * Badges are compact, non-interactive labels that surface a single piece of
+ * metadata — status, category, count, or classification — attached to another
+ * element like a row, card or header. They never carry their own action;
+ * tapping the row or card is the interaction, not the badge.
  *
- * Badges are always non-interactive: they label the thing next to them and
- * never carry an action of their own.
+ * Nine colour variants, four visual types, three sizes, a disabled state and
+ * optional icons, so meaning and emphasis can be tuned independently.
  */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {

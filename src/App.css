@@ -302,6 +302,10 @@
   line-height: 1.5;
 }
 
+.props__default {
+  white-space: nowrap;
+}
+
 .props__control {
   width: 1%;
   white-space: nowrap;

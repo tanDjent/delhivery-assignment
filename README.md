@@ -1,32 +1,157 @@
-# React + TypeScript + Vite
+# Delhivery Design System — LLM-first component workflow
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A prototype of one design-system component, `Badge`, built so that a large
+language model can use it correctly without a human explaining it first.
 
-Currently, two official plugins are available:
+The component is the smaller half of the work. The larger half is the
+documentation, retrieval and verification loop around it: a single source of
+truth for the component's public surface, docs generated from that source,
+three ways for an agent to retrieve them, an eval that measures whether an agent
+can actually build UI from the docs alone, and CI that fails when any of it
+drifts apart.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Live playground:** _add your Vercel URL here_
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+npm install
+npm run dev       # playground on :5173
+npm run verify    # lint, generated-file drift, tests, build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## What I took from the systems I looked at
+
+Meta's Astryx is the closest reference for the AI-first framing, and its
+retrieval model is the part worth copying. Component documentation is not
+pasted into a rules file; it is fetched on demand with
+`npx astryx component Badge`, which returns a fixed shape every time —
+description, import path, anatomy, best practices as explicit Do/Don't pairs, a
+props table, theming, and related templates. A terse `AGENTS.md` sits above it
+and routes to the detail. That structure is what keeps the system usable when
+there are eighty components instead of one: the agent's context holds the index,
+not the encyclopedia.
+
+The guidance itself is opinionated in a way that reads as written for a machine
+that will otherwise do the mediocre thing. The strongest rule in Astryx's Badge
+doc is not about the API at all — it says not to put a green "Active" badge on
+every healthy row, because if every row is badged then none of them stand out.
+That is a judgement an LLM will not reach on its own from a props table, and it
+is the kind of rule this system needed to state too.
+
+The most instructive thing, though, was a defect. Astryx's compressed
+`AGENTS.md` rule says "Badge = counts only," while the full component doc frames
+Badge as status-and-category and explicitly lists counts under *don't use badges
+for metadata*. The two disagree, because a human compressed the detailed doc into
+the terse one by hand and the copies then drifted. An agent reading the terse
+rule is confidently steered wrong.
+
+Everything about how this repo is wired follows from that observation: **the
+compressed layer must be generated from the same source as the detailed layer,
+or it will eventually lie.**
+
+## How it fits together
+
+```
+src/Design System/
+  tokens.json                 source of truth for every design value
+  tokens.css                  GENERATED from tokens.json
+  Badge/
+    badge.meta.ts             source of truth for the public API
+    Badge.tsx / .types.ts / .css
+    Badge.test.tsx            semantics: element, roles, aria, order
+    badge.meta.test.ts        the metadata still describes the implementation
+  tokens.test.ts              tokens are generated, and only tokens are used
+
+.cursor/skills/delhivery-design-system/
+  SKILL.md                    the index: rules, component list, how to choose
+  components/badge.md         the full doc; API tables are GENERATED
+  tokens.md                   GENERATED token reference
+
+AGENTS.md                     always-in-context rules, no duplicated API facts
+scripts/                      the generators and the retrieval CLI
+eval/                         the prompt, the agent's output, and the result
+```
+
+Two sources of truth, four consumers:
+
+| Source | Consumers |
+|---|---|
+| `tokens.json` | `tokens.css`, `tokens.md`, the token tests |
+| `badge.meta.ts` | the props table in `components/badge.md`, the playground's Properties table, the drift tests |
+
+Because the playground's interactive props table and the published props table
+are built from the same file, the documentation site cannot describe a prop the
+docs don't have — and neither can describe a prop the component doesn't have,
+because `badge.meta.test.ts` reads `Badge.types.ts` and compares.
+
+`npm run docs:build` fills the marked blocks in the markdown and leaves the prose
+alone. `npm run docs:check` fails if anything is stale, so the drift that broke
+Astryx's docs is a build error here rather than a bad suggestion months later.
+
+## How an agent gets the docs
+
+Three routes to the same markdown, because the docs should not depend on which
+tool the developer happens to use:
+
+1. **The skill.** In Cursor, `.cursor/skills/delhivery-design-system/SKILL.md`
+   loads on its own when a task touches UI, and points to the component doc.
+2. **`AGENTS.md`.** Always in context, for any agent that reads it. It holds only
+   what is true of every task, plus the component index and the retrieval command.
+3. **The CLI.** `npm run ds:component -- badge` prints the doc to stdout, for
+   agents, editors and CI jobs with no notion of skills.
+
+## Verification
+
+`npm run verify` is what CI runs, and what the skill tells an agent to run before
+finishing.
+
+| Check | Catches |
+|---|---|
+| `lint` | the usual |
+| `tokens:check` | `tokens.css` hand-edited, or `tokens.json` changed without regenerating |
+| `docs:check` | docs stale against `badge.meta.ts` or `tokens.json` |
+| `test` | 43 tests: badge semantics, geometry, token discipline, metadata drift |
+| `build` | typecheck and bundle |
+| `eval:check` | the agent-generated screen still compiles against the real types |
+
+Some of these started as things I checked by hand in a browser and then turned
+into tests. jsdom has no layout engine and does not resolve `var()`, so the
+geometry contract — 20/24/28px heights, 4px radius, 2px gap, icons at `1em`, a
+6px green dot — is asserted against the stylesheet source rather than a rendered
+element, which is honest about what is being proven. I verified the tests fail
+when the metadata lies by mutating a documented height and watching the suite go
+red.
+
+The last row is the interesting one. `eval:check` typechecks the screen an agent
+wrote from the docs against the real component types, so a breaking API change
+shows up as a failing eval.
+
+## The eval
+
+See [eval/README.md](eval/README.md) for the protocol, the prompt, the output and
+the grade.
+
+The short version: a fresh agent that was allowed to read the skill docs and
+nothing else — no component source, no types, no CSS — was asked to build a
+shipment tracking list with statuses, priority markers, a presence indicator and
+a loading state. The output is committed as `eval/run-1/`, and it is graded
+mechanically by typechecking against the real types, plus a read of whether it
+followed the judgement rules the docs put most weight on.
+
+## Component summary
+
+`Badge` is a compact, non-interactive marker for the status, category or count of
+the thing beside it: nine variants, four types, three sizes, an optional presence
+dot and optional icons. It renders a `<span>`, takes no click handler and is not
+focusable — badges never carry their own action. Full documentation:
+[`.cursor/skills/delhivery-design-system/components/badge.md`](.cursor/skills/delhivery-design-system/components/badge.md).
+
+## What I would do next
+
+- A second component, which is the real test of whether the skill's index-plus-
+  detail split holds up and whether `*.meta.ts` generalises.
+- Screenshot-based visual regression, since the geometry tests currently read CSS
+  text rather than measuring a rendered element.
+- Run the eval on more than one model and track the pass rate as the docs change,
+  so a documentation edit can be judged by whether it improves agent output.
+- Publish the tokens as a package artifact, since `tokens.json` is already
+  platform-agnostic and nothing about it is React-specific.

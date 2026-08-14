@@ -1,22 +1,14 @@
 import { useState, type ReactNode } from 'react'
 import { Badge } from '../Design System'
 import type { BadgeSize, BadgeType, BadgeVariant } from '../Design System'
+import {
+  BADGE_SIZES,
+  BADGE_TYPES,
+  BADGE_VARIANTS,
+  badgeMeta,
+} from '../Design System/Badge/badge.meta'
 import { CodeBlock } from './CodeBlock'
 import { InfoCircleIcon, PlusCircleIcon } from './icons'
-
-const VARIANTS: BadgeVariant[] = [
-  'black',
-  'white',
-  'coal',
-  'dlvRed',
-  'info',
-  'success',
-  'warning',
-  'error',
-  'cardbox',
-]
-const TYPES: BadgeType[] = ['solid', 'subtle', 'outlined', 'ghost']
-const SIZES: BadgeSize[] = ['small', 'medium', 'large']
 
 interface PlaygroundState {
   label: string
@@ -119,102 +111,75 @@ export function PropertiesTab() {
     setState((current) => ({ ...current, [key]: value }))
   }
 
-  const rows: { name: string; values: string; control: ReactNode }[] = [
-    {
-      name: 'label',
-      values: 'string',
-      control: (
-        <label className="control">
-          <span className="control__hidden-label">label</span>
-          <input
-            className="control__input"
-            value={state.label}
-            onChange={(event) => set('label', event.target.value)}
-          />
-        </label>
-      ),
-    },
-    {
-      name: 'variant',
-      values: VARIANTS.join(' | '),
-      control: (
-        <Select
-          label="variant"
-          value={state.variant}
-          options={VARIANTS}
-          onChange={(value) => set('variant', value)}
+  /**
+   * Row order, names and accepted values come from badge.meta.ts — the same file
+   * the published docs are generated from — so this table cannot describe a prop
+   * the docs don't, or vice versa. Only the control widget is chosen here.
+   */
+  const controls: Record<string, ReactNode> = {
+    label: (
+      <label className="control">
+        <span className="control__hidden-label">label</span>
+        <input
+          className="control__input"
+          value={state.label}
+          onChange={(event) => set('label', event.target.value)}
         />
-      ),
-    },
-    {
-      name: 'type',
-      values: TYPES.join(' | '),
-      control: (
-        <Select
-          label="type"
-          value={state.type}
-          options={TYPES}
-          onChange={(value) => set('type', value)}
-        />
-      ),
-    },
-    {
-      name: 'size',
-      values: SIZES.join(' | '),
-      control: (
-        <Select
-          label="size"
-          value={state.size}
-          options={SIZES}
-          onChange={(value) => set('size', value)}
-        />
-      ),
-    },
-    {
-      name: 'statusDot',
-      values: 'boolean',
-      control: (
-        <Switch
-          label="statusDot"
-          checked={state.statusDot}
-          onChange={(value) => set('statusDot', value)}
-        />
-      ),
-    },
-    {
-      name: 'leadingIcon',
-      values: 'ReactNode',
-      control: (
-        <Switch
-          label="leadingIcon"
-          checked={state.leadingIcon}
-          onChange={(value) => set('leadingIcon', value)}
-        />
-      ),
-    },
-    {
-      name: 'trailingIcon',
-      values: 'ReactNode',
-      control: (
-        <Switch
-          label="trailingIcon"
-          checked={state.trailingIcon}
-          onChange={(value) => set('trailingIcon', value)}
-        />
-      ),
-    },
-    {
-      name: 'disabled',
-      values: 'boolean',
-      control: (
-        <Switch
-          label="disabled"
-          checked={state.disabled}
-          onChange={(value) => set('disabled', value)}
-        />
-      ),
-    },
-  ]
+      </label>
+    ),
+    variant: (
+      <Select
+        label="variant"
+        value={state.variant}
+        options={BADGE_VARIANTS}
+        onChange={(value) => set('variant', value)}
+      />
+    ),
+    type: (
+      <Select
+        label="type"
+        value={state.type}
+        options={BADGE_TYPES}
+        onChange={(value) => set('type', value)}
+      />
+    ),
+    size: (
+      <Select
+        label="size"
+        value={state.size}
+        options={BADGE_SIZES}
+        onChange={(value) => set('size', value)}
+      />
+    ),
+    statusDot: (
+      <Switch
+        label="statusDot"
+        checked={state.statusDot}
+        onChange={(value) => set('statusDot', value)}
+      />
+    ),
+    leadingIcon: (
+      <Switch
+        label="leadingIcon"
+        checked={state.leadingIcon}
+        onChange={(value) => set('leadingIcon', value)}
+      />
+    ),
+    trailingIcon: (
+      <Switch
+        label="trailingIcon"
+        checked={state.trailingIcon}
+        onChange={(value) => set('trailingIcon', value)}
+      />
+    ),
+    disabled: (
+      <Switch
+        label="disabled"
+        checked={state.disabled}
+        onChange={(value) => set('disabled', value)}
+      />
+    ),
+  }
 
   return (
     <>
@@ -243,15 +208,21 @@ export function PropertiesTab() {
             <tr>
               <th scope="col">Prop</th>
               <th scope="col">Values</th>
+              <th scope="col">Default</th>
               <th scope="col">Control</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.name}>
-                <td className="props__name">{row.name}</td>
-                <td className="props__values">{row.values}</td>
-                <td className="props__control">{row.control}</td>
+            {badgeMeta.props.map((prop) => (
+              <tr key={prop.name}>
+                <td className="props__name">{prop.name}</td>
+                <td className="props__values">
+                  {prop.values ? prop.values.join(' | ') : prop.type}
+                </td>
+                <td className="props__values props__default">
+                  {prop.required ? 'required' : (prop.default ?? '—')}
+                </td>
+                <td className="props__control">{controls[prop.name]}</td>
               </tr>
             ))}
           </tbody>
