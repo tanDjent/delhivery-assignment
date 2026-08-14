@@ -144,14 +144,3 @@ the thing beside it: nine variants, four types, three sizes, an optional presenc
 dot and optional icons. It renders a `<span>`, takes no click handler and is not
 focusable — badges never carry their own action. Full documentation:
 [`.cursor/skills/delhivery-design-system/components/badge.md`](.cursor/skills/delhivery-design-system/components/badge.md).
-
-## What I would do next
-
-- A second component, which is the real test of whether the skill's index-plus-
-  detail split holds up and whether `*.meta.ts` generalises.
-- Screenshot-based visual regression, since the geometry tests currently read CSS
-  text rather than measuring a rendered element.
-- Run the eval on more than one model and track the pass rate as the docs change,
-  so a documentation edit can be judged by whether it improves agent output.
-- Publish the tokens as a package artifact, since `tokens.json` is already
-  platform-agnostic and nothing about it is React-specific.
