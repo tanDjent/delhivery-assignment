@@ -20,11 +20,11 @@ export type BadgeVariant =
  */
 export type BadgeType = 'solid' | 'subtle' | 'outlined' | 'ghost'
 
-/** Height / type scale step of the badge. */
-export type BadgeSize = 'medium' | 'small' | 'xsmall'
+/** Height step of the badge: 20, 24 and 28 pixels. */
+export type BadgeSize = 'small' | 'medium' | 'large'
 
 export interface BadgeProps
-  extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'color'> {
+  extends Omit<HTMLAttributes<HTMLSpanElement>, 'children' | 'color'> {
   /** Text shown inside the badge. Kept as a string to enforce short labels. */
   label: string
   variant?: BadgeVariant
@@ -32,17 +32,10 @@ export interface BadgeProps
   size?: BadgeSize
   /** Icon rendered before the label. */
   leadingIcon?: ReactNode
-  /** Icon rendered after the label, e.g. a chevron or dismiss glyph. */
+  /** Icon rendered after the label. */
   trailingIcon?: ReactNode
-  /** Dims the badge and blocks interaction. */
+  /** Shows a green presence dot before the leading icon. */
+  statusDot?: boolean
+  /** Dims the badge to de-emphasise it. */
   disabled?: boolean
-  /** Stretches the badge to the width of its container. */
-  fullWidth?: boolean
-  /** Clamps the label to a single line with an ellipsis. */
-  truncate?: boolean
-  /**
-   * Makes the badge actionable. Supplying this renders a `<button>` instead of
-   * a `<span>` so keyboard and screen reader users get real button semantics.
-   */
-  onClick?: () => void
 }

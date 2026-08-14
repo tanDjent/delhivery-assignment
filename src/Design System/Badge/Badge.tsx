@@ -3,10 +3,12 @@ import type { BadgeProps } from './Badge.types'
 import './Badge.css'
 
 /**
- * Badge — a compact, non-interactive-by-default marker for status, category or
- * count. Pass `onClick` to make it actionable.
+ * Badge — a compact marker for status, category or count.
+ *
+ * Badges are always non-interactive: they label the thing next to them and
+ * never carry an action of their own.
  */
-export const Badge = forwardRef<HTMLElement, BadgeProps>(function Badge(
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
     label,
     variant = 'black',
@@ -14,27 +16,19 @@ export const Badge = forwardRef<HTMLElement, BadgeProps>(function Badge(
     size = 'medium',
     leadingIcon,
     trailingIcon,
+    statusDot = false,
     disabled = false,
-    fullWidth = false,
-    truncate = false,
-    onClick,
     className,
     ...rest
   },
   ref,
 ) {
-  const isGhost = type === 'ghost'
-  const isInteractive = Boolean(onClick) && !disabled && !isGhost
-
   const classes = [
     'ds-badge',
     `ds-badge--${variant}`,
     `ds-badge--${type}`,
     `ds-badge--${size}`,
     disabled && 'ds-badge--disabled',
-    fullWidth && 'ds-badge--full-width',
-    truncate && 'ds-badge--truncate',
-    isInteractive && 'ds-badge--interactive',
     className,
   ]
     .filter(Boolean)
@@ -42,21 +36,22 @@ export const Badge = forwardRef<HTMLElement, BadgeProps>(function Badge(
 
   // The ghost state has no meaningful content yet, so it is hidden from the
   // accessibility tree and announced by the surrounding loading region instead.
-  if (isGhost) {
+  if (type === 'ghost') {
     return (
-      <span
-        {...rest}
-        ref={ref as React.Ref<HTMLSpanElement>}
-        className={classes}
-        aria-hidden="true"
-      >
+      <span {...rest} ref={ref} className={classes} aria-hidden="true">
         <span className="ds-badge__shimmer" />
       </span>
     )
   }
 
-  const content = (
-    <>
+  return (
+    <span
+      {...rest}
+      ref={ref}
+      className={classes}
+      aria-disabled={disabled || undefined}
+    >
+      {statusDot ? <span className="ds-badge__dot" aria-hidden="true" /> : null}
       {leadingIcon ? (
         <span className="ds-badge__icon" aria-hidden="true">
           {leadingIcon}
@@ -68,32 +63,6 @@ export const Badge = forwardRef<HTMLElement, BadgeProps>(function Badge(
           {trailingIcon}
         </span>
       ) : null}
-    </>
-  )
-
-  if (onClick) {
-    return (
-      <button
-        {...rest}
-        ref={ref as React.Ref<HTMLButtonElement>}
-        type="button"
-        className={classes}
-        disabled={disabled}
-        onClick={onClick}
-      >
-        {content}
-      </button>
-    )
-  }
-
-  return (
-    <span
-      {...rest}
-      ref={ref as React.Ref<HTMLSpanElement>}
-      className={classes}
-      aria-disabled={disabled || undefined}
-    >
-      {content}
     </span>
   )
 })

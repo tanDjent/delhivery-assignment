@@ -16,19 +16,17 @@ const VARIANTS: BadgeVariant[] = [
   'cardbox',
 ]
 const TYPES: BadgeType[] = ['solid', 'subtle', 'outlined', 'ghost']
-const SIZES: BadgeSize[] = ['medium', 'small', 'xsmall']
+const SIZES: BadgeSize[] = ['small', 'medium', 'large']
 
 interface PlaygroundState {
   label: string
   variant: BadgeVariant
   type: BadgeType
   size: BadgeSize
+  statusDot: boolean
   leadingIcon: boolean
   trailingIcon: boolean
   disabled: boolean
-  fullWidth: boolean
-  truncate: boolean
-  interactive: boolean
 }
 
 const INITIAL: PlaygroundState = {
@@ -36,12 +34,10 @@ const INITIAL: PlaygroundState = {
   variant: 'info',
   type: 'solid',
   size: 'medium',
+  statusDot: false,
   leadingIcon: false,
   trailingIcon: false,
   disabled: false,
-  fullWidth: false,
-  truncate: false,
-  interactive: false,
 }
 
 function buildCode(state: PlaygroundState) {
@@ -51,12 +47,10 @@ function buildCode(state: PlaygroundState) {
     `  type="${state.type}"`,
     `  size="${state.size}"`,
   ]
+  if (state.statusDot) lines.push('  statusDot')
   if (state.leadingIcon) lines.push('  leadingIcon={<InfoCircleIcon />}')
   if (state.trailingIcon) lines.push('  trailingIcon={<PlusCircleIcon />}')
   if (state.disabled) lines.push('  disabled')
-  if (state.fullWidth) lines.push('  fullWidth')
-  if (state.truncate) lines.push('  truncate')
-  if (state.interactive) lines.push('  onClick={handleClick}')
   return `<Badge\n${lines.join('\n')}\n/>`
 }
 
@@ -117,7 +111,6 @@ function Switch({
 
 export function PropertiesTab() {
   const [state, setState] = useState<PlaygroundState>(INITIAL)
-  const [clicks, setClicks] = useState(0)
 
   function set<K extends keyof PlaygroundState>(
     key: K,
@@ -178,6 +171,17 @@ export function PropertiesTab() {
       ),
     },
     {
+      name: 'statusDot',
+      values: 'boolean',
+      control: (
+        <Switch
+          label="statusDot"
+          checked={state.statusDot}
+          onChange={(value) => set('statusDot', value)}
+        />
+      ),
+    },
+    {
       name: 'leadingIcon',
       values: 'ReactNode',
       control: (
@@ -210,65 +214,23 @@ export function PropertiesTab() {
         />
       ),
     },
-    {
-      name: 'fullWidth',
-      values: 'boolean',
-      control: (
-        <Switch
-          label="fullWidth"
-          checked={state.fullWidth}
-          onChange={(value) => set('fullWidth', value)}
-        />
-      ),
-    },
-    {
-      name: 'truncate',
-      values: 'boolean',
-      control: (
-        <Switch
-          label="truncate"
-          checked={state.truncate}
-          onChange={(value) => set('truncate', value)}
-        />
-      ),
-    },
-    {
-      name: 'onClick',
-      values: '() => void',
-      control: (
-        <Switch
-          label="onClick"
-          checked={state.interactive}
-          onChange={(value) => set('interactive', value)}
-        />
-      ),
-    },
   ]
 
   return (
     <>
       <div className="display">
-        <div className="display__frame">
+        <div className="display__row">
           <Badge
             label={state.label}
             variant={state.variant}
             type={state.type}
             size={state.size}
+            statusDot={state.statusDot}
             disabled={state.disabled}
-            fullWidth={state.fullWidth}
-            truncate={state.truncate}
             leadingIcon={state.leadingIcon ? <InfoCircleIcon /> : undefined}
             trailingIcon={state.trailingIcon ? <PlusCircleIcon /> : undefined}
-            onClick={
-              state.interactive ? () => setClicks((count) => count + 1) : undefined
-            }
           />
         </div>
-        {state.interactive && (
-          <p className="display__hint">
-            Clicked {clicks} {clicks === 1 ? 'time' : 'times'}
-          </p>
-        )}
       </div>
 
       <section className="section">

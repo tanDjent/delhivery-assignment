@@ -7,8 +7,13 @@
  */
 
 .ds-badge {
-  --badge-solid-bg: var(--ds-color-black);
-  --badge-solid-fg: var(--ds-color-white);
+  /* Label sizes are Badge-specific rather than a shared type scale. */
+  --badge-font-size-small: 10px;
+  --badge-font-size-medium: 12px;
+  --badge-font-size-large: 16px;
+
+  --badge-solid-bg: var(--ds-variant-black-bg);
+  --badge-solid-fg: var(--ds-variant-black-text);
   --badge-soft-bg: var(--ds-color-grey-100);
   --badge-soft-fg: var(--ds-color-black);
   --badge-line: var(--ds-color-grey-300);
@@ -19,63 +24,48 @@
   box-sizing: border-box;
   max-width: 100%;
   margin: 0;
+  gap: var(--ds-space-2);
   border: var(--ds-border-width) solid transparent;
   border-radius: var(--ds-radius-md);
   font-family: var(--ds-font-family);
   font-weight: var(--ds-font-weight-medium);
   line-height: 1;
   white-space: nowrap;
-  text-decoration: none;
   vertical-align: middle;
-  transition:
-    background-color var(--ds-duration-fast) var(--ds-easing-standard),
-    border-color var(--ds-duration-fast) var(--ds-easing-standard),
-    color var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
-/* ---------------------------------------------------------------- Sizes --- */
-
-.ds-badge--medium {
-  min-height: 24px;
-  padding: 0 var(--ds-space-100);
-  gap: var(--ds-space-50);
-  font-size: var(--ds-font-size-300);
-  --badge-icon-size: 14px;
-}
+/* ---------------------------------------------------------------- Sizes ---
+ * The height of each step is fixed, so the padding below is the horizontal
+ * inset and the intended breathing room above and below the label. Small
+ * resolves exactly; at medium and large the label is 2px taller than the space
+ * the padding leaves it, so the height wins and the effective vertical inset
+ * lands 1px tighter than declared. */
 
 .ds-badge--small {
-  min-height: 20px;
-  padding: 0 var(--ds-space-75);
-  gap: var(--ds-space-50);
-  font-size: var(--ds-font-size-200);
-  border-radius: var(--ds-radius-sm);
+  height: 20px;
+  padding: var(--ds-space-4);
+  font-size: var(--badge-font-size-small);
   --badge-icon-size: 12px;
 }
 
-.ds-badge--xsmall {
-  min-height: 16px;
-  padding: 0 var(--ds-space-50);
-  gap: var(--ds-space-25);
-  font-size: var(--ds-font-size-100);
-  border-radius: var(--ds-radius-xs);
-  --badge-icon-size: 10px;
+.ds-badge--medium {
+  height: 24px;
+  padding: var(--ds-space-6);
+  font-size: var(--badge-font-size-medium);
+  --badge-icon-size: 14px;
+}
+
+.ds-badge--large {
+  height: 28px;
+  padding: var(--ds-space-6);
+  font-size: var(--badge-font-size-large);
+  --badge-icon-size: 16px;
 }
 
 /* --------------------------------------------------------------- Layout --- */
 
 .ds-badge__label {
   display: block;
-  min-width: 0;
-}
-
-.ds-badge--truncate .ds-badge__label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ds-badge--full-width {
-  display: flex;
-  width: 100%;
 }
 
 .ds-badge__icon {
@@ -94,12 +84,20 @@
   display: block;
 }
 
+.ds-badge__dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ds-radius-full);
+  background-color: var(--ds-status-dot-color);
+}
+
 /* ---------------------------------------------------------------- Types --- */
 
 .ds-badge--solid {
   background-color: var(--badge-solid-bg);
   color: var(--badge-solid-fg);
-  border-color: var(--badge-solid-border, var(--badge-solid-bg));
+  border-color: var(--badge-solid-bg);
 }
 
 .ds-badge--subtle {
@@ -116,32 +114,11 @@
 
 /* --------------------------------------------------------------- States --- */
 
-.ds-badge--interactive {
-  cursor: pointer;
-  appearance: none;
-}
-
-.ds-badge--interactive:hover {
-  background-color: var(--badge-hover-bg, var(--badge-soft-bg));
-}
-
-.ds-badge--solid.ds-badge--interactive:hover {
-  --badge-hover-bg: var(--badge-solid-bg-hover, var(--badge-solid-bg));
-  border-color: var(--badge-hover-bg);
-}
-
-.ds-badge--interactive:focus-visible {
-  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
-  outline-offset: var(--ds-focus-ring-offset);
-}
-
 .ds-badge--disabled {
   background-color: var(--badge-soft-bg);
   color: var(--badge-soft-fg);
   border-color: var(--badge-soft-bg);
   opacity: 0.45;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .ds-badge--outlined.ds-badge--disabled {
@@ -163,7 +140,6 @@
   display: block;
   width: 100%;
   align-self: stretch;
-  min-height: inherit;
   border-radius: inherit;
   background-image: linear-gradient(
     90deg,
@@ -193,21 +169,18 @@
 /* ------------------------------------------------------------- Variants --- */
 
 .ds-badge--black {
-  --badge-solid-bg: var(--ds-color-black);
-  --badge-solid-bg-hover: var(--ds-color-black-hover);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-black-bg);
+  --badge-solid-fg: var(--ds-variant-black-text);
   --badge-soft-bg: var(--ds-color-grey-100);
   --badge-soft-fg: var(--ds-color-black);
   --badge-line: var(--ds-color-grey-300);
 }
 
-/* White sits on dark surfaces, so its solid needs a hairline to stay legible
-   on light ones and its outline is intentionally invisible on white. */
+/* White is intended for dark surfaces, so it carries no border and its
+   outlined treatment is white on transparent. */
 .ds-badge--white {
-  --badge-solid-bg: var(--ds-color-white);
-  --badge-solid-border: var(--ds-color-grey-200);
-  --badge-solid-bg-hover: var(--ds-color-grey-50);
-  --badge-solid-fg: var(--ds-color-black);
+  --badge-solid-bg: var(--ds-variant-white-bg);
+  --badge-solid-fg: var(--ds-variant-white-text);
   --badge-soft-bg: var(--ds-color-grey-200);
   --badge-soft-fg: var(--ds-color-grey-600);
   --badge-outline-fg: var(--ds-color-white);
@@ -215,64 +188,56 @@
 }
 
 .ds-badge--coal {
-  --badge-solid-bg: var(--ds-color-coal-500);
-  --badge-solid-bg-hover: var(--ds-color-coal-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-coal-bg);
+  --badge-solid-fg: var(--ds-variant-coal-text);
   --badge-soft-bg: var(--ds-color-coal-50);
   --badge-soft-fg: var(--ds-color-coal-700);
   --badge-line: var(--ds-color-coal-200);
 }
 
 .ds-badge--dlvRed {
-  --badge-solid-bg: var(--ds-color-dlv-red-500);
-  --badge-solid-bg-hover: var(--ds-color-dlv-red-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-dlv-red-bg);
+  --badge-solid-fg: var(--ds-variant-dlv-red-text);
   --badge-soft-bg: var(--ds-color-dlv-red-50);
   --badge-soft-fg: var(--ds-color-dlv-red-700);
   --badge-line: var(--ds-color-dlv-red-200);
 }
 
 .ds-badge--info {
-  --badge-solid-bg: var(--ds-color-info-500);
-  --badge-solid-bg-hover: var(--ds-color-info-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-info-bg);
+  --badge-solid-fg: var(--ds-variant-info-text);
   --badge-soft-bg: var(--ds-color-info-50);
   --badge-soft-fg: var(--ds-color-info-700);
   --badge-line: var(--ds-color-info-200);
 }
 
 .ds-badge--success {
-  --badge-solid-bg: var(--ds-color-success-500);
-  --badge-solid-bg-hover: var(--ds-color-success-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-success-bg);
+  --badge-solid-fg: var(--ds-variant-success-text);
   --badge-soft-bg: var(--ds-color-success-50);
   --badge-soft-fg: var(--ds-color-success-700);
   --badge-line: var(--ds-color-success-200);
 }
 
-/* Warning yellow cannot carry white text at 4.5:1, so it keeps dark text. */
 .ds-badge--warning {
-  --badge-solid-bg: var(--ds-color-warning-500);
-  --badge-solid-bg-hover: var(--ds-color-warning-600);
-  --badge-solid-fg: var(--ds-color-black);
+  --badge-solid-bg: var(--ds-variant-warning-bg);
+  --badge-solid-fg: var(--ds-variant-warning-text);
   --badge-soft-bg: var(--ds-color-warning-50);
   --badge-soft-fg: var(--ds-color-warning-700);
   --badge-line: var(--ds-color-warning-200);
 }
 
 .ds-badge--error {
-  --badge-solid-bg: var(--ds-color-error-500);
-  --badge-solid-bg-hover: var(--ds-color-error-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-error-bg);
+  --badge-solid-fg: var(--ds-variant-error-text);
   --badge-soft-bg: var(--ds-color-error-50);
   --badge-soft-fg: var(--ds-color-error-700);
   --badge-line: var(--ds-color-error-200);
 }
 
 .ds-badge--cardbox {
-  --badge-solid-bg: var(--ds-color-cardbox-500);
-  --badge-solid-bg-hover: var(--ds-color-cardbox-600);
-  --badge-solid-fg: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-variant-cardbox-bg);
+  --badge-solid-fg: var(--ds-variant-cardbox-text);
   --badge-soft-bg: var(--ds-color-cardbox-50);
   --badge-soft-fg: var(--ds-color-cardbox-700);
   --badge-line: var(--ds-color-cardbox-200);

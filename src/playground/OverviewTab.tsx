@@ -44,9 +44,9 @@ const TYPES_CODE = `<Badge variant="success" type="solid" label="Solid" />
 <Badge variant="success" type="subtle" label="Subtle" />
 <Badge variant="success" type="outlined" label="Outlined" />`
 
-const SIZES_CODE = `<Badge variant="info" size="medium" label="Medium" />
-<Badge variant="info" size="small" label="Small" />
-<Badge variant="info" size="xsmall" label="XSmall" />`
+const SIZES_CODE = `<Badge variant="info" size="small" label="Small" />
+<Badge variant="info" size="medium" label="Medium" />
+<Badge variant="info" size="large" label="Large" />`
 
 const ICONS_CODE = `<Badge
   variant="coal"
@@ -154,12 +154,12 @@ export function OverviewTab() {
 
         <ExampleCard
           title="Sizes"
-          description="Three sizes at 24, 20 and 16 pixels tall, with the type scale and corner radius stepping down to match. Medium is the default and the only size that should appear on its own in a page header. Small and XSmall are for dense rows and inline use, where a medium badge would push the line height out."
+          description="Three sizes at 20, 24 and 28 pixels tall, with labels of 10, 12 and 16 pixels. Medium is the default. Small suits dense rows where a medium badge would push the line height out; large is for headers and detail pages where the badge is the thing you want read first."
           code={SIZES_CODE}
         >
-          <Badge variant="info" size="medium" label="Medium" />
           <Badge variant="info" size="small" label="Small" />
-          <Badge variant="info" size="xsmall" label="XSmall" />
+          <Badge variant="info" size="medium" label="Medium" />
+          <Badge variant="info" size="large" label="Large" />
         </ExampleCard>
 
         <ExampleCard
