@@ -10,7 +10,7 @@ three ways for an agent to retrieve them, an eval that measures whether an agent
 can actually build UI from the docs alone, and CI that fails when any of it
 drifts apart.
 
-**Live playground:** _add your Vercel URL here_
+**Live playground:** <https://delhivery-assignment.vercel.app/>
 
 ```
 npm install
