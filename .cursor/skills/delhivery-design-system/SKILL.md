@@ -69,5 +69,6 @@ meaning that isn't there.
 
 ## Before you finish
 
-Run `npm run verify`. It lints, typechecks, tests, builds, and fails if any
-generated file has drifted from its source.
+Run `npm run verify`. It lints, typechecks, tests and builds, fails if any
+generated file has drifted from its source, and fails if a change to a
+component's API breaks the agent-written screen in `eval/`.

@@ -24,7 +24,7 @@ npm run ds:component -- badge
 ```
 npm install
 npm run dev        # docs site on :5173
-npm run verify     # lint + typecheck + test + build + generated-file drift
+npm run verify     # lint + drift + test + build + agent eval typecheck
 ```
 
 ## Generated files — never edit by hand

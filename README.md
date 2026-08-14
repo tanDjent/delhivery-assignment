@@ -101,8 +101,9 @@ tool the developer happens to use:
 
 ## Verification
 
-`npm run verify` is what CI runs, and what the skill tells an agent to run before
-finishing.
+`npm run verify` runs every check below, and is what the skill tells an agent to
+run before finishing. CI runs the same checks as separate steps, so a failure
+names itself.
 
 | Check | Catches |
 |---|---|
