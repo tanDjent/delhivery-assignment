@@ -42,7 +42,8 @@ const PRACTICES: { kind: 'do' | 'dont'; text: string }[] = [
 
 const TYPES_CODE = `<Badge variant="success" type="solid" label="Solid" />
 <Badge variant="success" type="subtle" label="Subtle" />
-<Badge variant="success" type="outlined" label="Outlined" />`
+<Badge variant="success" type="outlined" label="Outlined" />
+<Badge variant="success" type="disabled" label="Disabled" />`
 
 const SIZES_CODE = `<Badge variant="info" size="small" label="Small" />
 <Badge variant="info" size="medium" label="Medium" />
@@ -144,17 +145,18 @@ export function OverviewTab() {
 
         <ExampleCard
           title="Types"
-          description="The same variant rendered as each of the three visible types. Solid carries the most emphasis and suits primary status; subtle sits quietly inside dense tables and lists; outlined is the lightest and works where the surface already carries colour. Pick one type per group so the difference in weight is never mistaken for a difference in meaning."
+          description="The same variant rendered as each visible type. Solid carries the most emphasis and suits primary status; subtle sits quietly inside dense tables and lists; outlined is the lightest and works where the surface already carries colour. Disabled is a type rather than a flag, because it replaces the colours instead of dimming them. Pick one type per group so the difference in weight is never mistaken for a difference in meaning."
           code={TYPES_CODE}
         >
           <Badge variant="success" type="solid" label="Solid" />
           <Badge variant="success" type="subtle" label="Subtle" />
           <Badge variant="success" type="outlined" label="Outlined" />
+          <Badge variant="success" type="disabled" label="Disabled" />
         </ExampleCard>
 
         <ExampleCard
           title="Sizes"
-          description="Three sizes at 20, 24 and 28 pixels tall, with labels of 10, 12 and 16 pixels. Medium is the default. Small suits dense rows where a medium badge would push the line height out; large is for headers and detail pages where the badge is the thing you want read first."
+          description="Three sizes at 20, 24 and 28 pixels tall. Small and medium share the caption2_default text style at 10 pixels; large steps up to caption1_default at 12. Medium is the default. Small suits dense rows where a medium badge would push the line height out; large is for headers and detail pages where the badge is the thing you want read first."
           code={SIZES_CODE}
         >
           <Badge variant="info" size="small" label="Small" />

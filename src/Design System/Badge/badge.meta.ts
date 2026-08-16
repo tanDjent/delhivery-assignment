@@ -27,8 +27,11 @@ export interface PropMeta {
 export interface SizeMeta {
   name: string
   height: string
+  /** The Figma text style applied to the label. */
   label: string
   padding: string
+  icon: string
+  dot: string
 }
 
 /** A value that is deliberately not configurable. */
@@ -56,7 +59,13 @@ export const BADGE_VARIANTS = [
   'cardbox',
 ] as const
 
-export const BADGE_TYPES = ['solid', 'subtle', 'outlined', 'ghost'] as const
+export const BADGE_TYPES = [
+  'solid',
+  'subtle',
+  'outlined',
+  'disabled',
+  'ghost',
+] as const
 
 export const BADGE_SIZES = ['small', 'medium', 'large'] as const
 
@@ -109,18 +118,33 @@ const props: readonly PropMeta[] = [
     type: 'ReactNode',
     description: 'Icon after the label. Also hidden from assistive technology.',
   },
-  {
-    name: 'disabled',
-    type: 'boolean',
-    default: 'false',
-    description: 'Dims the badge and sets `aria-disabled`.',
-  },
 ]
 
 const sizes: readonly SizeMeta[] = [
-  { name: 'small', height: '20px', label: '10px', padding: '4px' },
-  { name: 'medium', height: '24px', label: '12px', padding: '6px' },
-  { name: 'large', height: '28px', label: '16px', padding: '6px' },
+  {
+    name: 'small',
+    height: '20px',
+    label: 'C2/caption2_default',
+    padding: '4px',
+    icon: '12px',
+    dot: '4px',
+  },
+  {
+    name: 'medium',
+    height: '24px',
+    label: 'C2/caption2_default',
+    padding: '6px',
+    icon: '12px',
+    dot: '4px',
+  },
+  {
+    name: 'large',
+    height: '28px',
+    label: 'C1/caption1_default',
+    padding: '6px',
+    icon: '16px',
+    dot: '6px',
+  },
 ]
 
 const fixed: readonly FixedMeta[] = [
@@ -129,10 +153,13 @@ const fixed: readonly FixedMeta[] = [
   {
     name: 'Label font',
     value: 'Noto Sans Medium (500)',
-    note: 'Self-hosted via @fontsource.',
+    note: 'Self-hosted via @fontsource. Small and medium share one text style.',
   },
-  { name: 'Icon size', value: '1em', note: 'Always equal to the label size.' },
-  { name: 'Status dot', value: '6px, green', note: 'Does not scale.' },
+  {
+    name: 'Status dot colour',
+    value: 'green',
+    note: 'Presence only; it never reflects the variant.',
+  },
 ]
 
 const absent: readonly AbsentMeta[] = [
@@ -149,6 +176,11 @@ const absent: readonly AbsentMeta[] = [
     name: 'truncate',
     reason:
       'A label that needs truncating is too long. Shorten it to one or two words.',
+  },
+  {
+    name: 'disabled',
+    reason:
+      'Disabled is a `type`, not a flag. It replaces the colours rather than dimming them, so it cannot combine with `solid` or `subtle`.',
   },
 ]
 

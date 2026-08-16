@@ -15,10 +15,14 @@ export type BadgeVariant =
 /**
  * Visual treatment applied on top of the variant colour.
  *
+ * `disabled` is a treatment rather than a boolean because Figma models it as
+ * one: it replaces the type's colours outright instead of dimming them, so it
+ * cannot be combined with `solid` or `subtle`.
+ *
  * `ghost` is the placeholder used while the real value is still loading; it
  * renders a shimmering block instead of the label.
  */
-export type BadgeType = 'solid' | 'subtle' | 'outlined' | 'ghost'
+export type BadgeType = 'solid' | 'subtle' | 'outlined' | 'disabled' | 'ghost'
 
 /** Height step of the badge: 20, 24 and 28 pixels. */
 export type BadgeSize = 'small' | 'medium' | 'large'
@@ -36,6 +40,4 @@ export interface BadgeProps
   trailingIcon?: ReactNode
   /** Shows a green presence dot before the leading icon. */
   statusDot?: boolean
-  /** Dims the badge to de-emphasise it. */
-  disabled?: boolean
 }

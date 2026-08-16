@@ -36,6 +36,53 @@ const table = (headers, rows) =>
 const entries = (group) =>
   Object.entries(group).filter(([key]) => !key.startsWith('$'))
 
+/** Every token in a subtree, as [pathSegments, token]. */
+function leaves(node, path = []) {
+  if (node?.$value !== undefined) return [[path, node]]
+  return entries(node ?? {}).flatMap(([key, child]) =>
+    leaves(child, [...path, key]),
+  )
+}
+
+/** The mapped tier: everything that isn't a primitive, an alias or legacy. */
+const MAPPED_GROUPS = entries(tokens).filter(
+  ([key]) => !['brand', 'alias', 'legacy', 'typography'].includes(key),
+)
+
+const mappedGroups = () =>
+  table(
+    ['Group', 'Tokens', 'Example'],
+    MAPPED_GROUPS.map(([name, group]) => {
+      const all = leaves(group)
+      return [
+        code(name),
+        String(all.length),
+        code(`--ds-${name}-${all[0][0].join('-')}`),
+      ]
+    }),
+  )
+
+/** Follows {group.token} references to the literal a browser ends up with. */
+function resolve(value, depth = 0) {
+  if (typeof value !== 'string' || !value.startsWith('{') || depth > 10) {
+    return String(value)
+  }
+  const target = value
+    .slice(1, -1)
+    .split('.')
+    .reduce((node, key) => node?.[key], tokens)
+  return target ? resolve(target.$value, depth + 1) : value
+}
+
+const scaleRows = (group, prefix) =>
+  leaves(tokens[group] ?? {}).map(([path, token]) => [
+    code(`${prefix}${path.join('-')}`),
+    resolve(token.$value),
+  ])
+
+const scale = (group, prefix) =>
+  table(['Token', 'Value'], scaleRows(group, prefix))
+
 const blocks = {
   'components/badge.md': {
     props: table(
@@ -48,12 +95,14 @@ const blocks = {
       ]),
     ),
     sizes: table(
-      ['Size', 'Height', 'Label', 'Padding'],
+      ['Size', 'Height', 'Padding', 'Label style', 'Icon', 'Dot'],
       badgeMeta.sizes.map((size) => [
         code(size.name),
         size.height,
-        size.label,
         size.padding,
+        code(size.label),
+        size.icon,
+        size.dot,
       ]),
     ),
     fixed: table(
@@ -66,39 +115,29 @@ const blocks = {
     ),
   },
   'tokens.md': {
-    space: table(
-      ['Token', 'Value'],
-      entries(tokens.space).map(([key, token]) => [
-        code(`--ds-space-${key}`),
-        token.$value,
+    groups: mappedGroups(),
+    spacing: scale('spacing', '--ds-spacing-'),
+    shape: [
+      ...scaleRows('radius', '--ds-radius-'),
+      ...scaleRows('stroke', '--ds-stroke-'),
+    ].length
+      ? table(
+          ['Token', 'Value'],
+          [
+            ...scaleRows('radius', '--ds-radius-'),
+            ...scaleRows('stroke', '--ds-stroke-'),
+          ],
+        )
+      : '',
+    typography: table(
+      ['Token', 'Family', 'Size', 'Weight', 'Line height'],
+      leaves(tokens.typography).map(([path, token]) => [
+        code(`--ds-typography-${path.join('-')}`),
+        token.$value.fontFamily.split(',')[0].replace(/'/g, ''),
+        token.$value.fontSize,
+        String(token.$value.fontWeight),
+        token.$value.lineHeight,
       ]),
-    ),
-    variants: table(
-      ['Variant', 'Background', 'Text'],
-      entries(tokens.variant).map(([name, pair]) => [
-        code(name),
-        code(pair.background.$value),
-        code(pair.text.$value),
-      ]),
-    ),
-    palette: entries(tokens.color)
-      .map(([key, token]) => `- ${code(`--ds-color-${key}`)} ${token.$value}`)
-      .join('\n'),
-    other: table(
-      ['Token', 'Value'],
-      [
-        ...entries(tokens.radius).map(([key, token]) => [
-          code(`--ds-radius-${key}`),
-          token.$value,
-        ]),
-        [code('--ds-border-width'), tokens.border.width.$value],
-        [code('--ds-status-dot-color'), tokens.statusDot.color.$value],
-        ...entries(tokens.font.weight).map(([key, token]) => [
-          code(`--ds-font-weight-${key}`),
-          token.$value,
-        ]),
-        [code('--ds-duration-fast'), tokens.duration.fast.$value],
-      ],
     ),
   },
 }

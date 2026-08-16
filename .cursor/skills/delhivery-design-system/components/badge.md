@@ -32,12 +32,11 @@ Renders a single `<span>`. There is no wrapper element and no focusable child.
 |---|---|---|---|
 | `label` | `string` | **required** | Text shown inside the badge. A string rather than a node, to keep labels short. |
 | `variant` | `black` `white` `coal` `dlvRed` `info` `success` `warning` `error` `cardbox` | `black` | Colour intent. Semantic variants report state; the rest categorise. |
-| `type` | `solid` `subtle` `outlined` `ghost` | `solid` | Visual emphasis. `ghost` is a loading placeholder, not a style choice. |
+| `type` | `solid` `subtle` `outlined` `disabled` `ghost` | `solid` | Visual emphasis. `ghost` is a loading placeholder, not a style choice. |
 | `size` | `small` `medium` `large` | `medium` | Height step. See the size table below. |
 | `statusDot` | `boolean` | `false` | Shows a green presence dot before the leading icon, as for an online indicator. |
 | `leadingIcon` | `ReactNode` | `—` | Icon before the label. Hidden from assistive technology, so it must reinforce the label rather than replace it. |
 | `trailingIcon` | `ReactNode` | `—` | Icon after the label. Also hidden from assistive technology. |
-| `disabled` | `boolean` | `false` | Dims the badge and sets `aria-disabled`. |
 <!-- /GENERATED:props -->
 
 Also accepts `HTMLAttributes<HTMLSpanElement>` except `children` and `color`, and
@@ -46,16 +45,19 @@ forwards a ref to the `<span>`.
 ## Sizes
 
 <!-- GENERATED:sizes -->
-| Size | Height | Label | Padding |
-|---|---|---|---|
-| `small` | 20px | 10px | 4px |
-| `medium` | 24px | 12px | 6px |
-| `large` | 28px | 16px | 6px |
+| Size | Height | Padding | Label style | Icon | Dot |
+|---|---|---|---|---|---|
+| `small` | 20px | 4px | `C2/caption2_default` | 12px | 4px |
+| `medium` | 24px | 6px | `C2/caption2_default` | 12px | 4px |
+| `large` | 28px | 6px | `C1/caption1_default` | 16px | 6px |
 <!-- /GENERATED:sizes -->
 
-The height is authoritative. At medium and large the label plus padding would be
-2px taller than the height, so the effective vertical inset lands 1px tighter
-than the declared padding. Small resolves exactly.
+Every step resolves exactly: the label's line height plus twice the padding
+equals the height at all three sizes. Small and medium differ only in padding,
+not in label size.
+
+Icons are a fixed pixel size per step rather than sized from the label, so a
+12px icon sits beside a 10px label at small and medium.
 
 ## Fixed by design
 
@@ -66,9 +68,8 @@ Not configurable, deliberately.
 |---|---|---|
 | Border radius | `4px` | Every size. |
 | Gap | `2px` | Between dot, icons and label. |
-| Label font | `Noto Sans Medium (500)` | Self-hosted via @fontsource. |
-| Icon size | `1em` | Always equal to the label size. |
-| Status dot | `6px, green` | Does not scale. |
+| Label font | `Noto Sans Medium (500)` | Self-hosted via @fontsource. Small and medium share one text style. |
+| Status dot colour | `green` | Presence only; it never reflects the variant. |
 <!-- /GENERATED:fixed -->
 
 ## Not props
@@ -79,6 +80,7 @@ Not configurable, deliberately.
 | `onClick` | Badges are never interactive. Use a button or link beside the badge. |
 | `fullWidth` | A badge sizes to its label; stretching it reads as a banner. |
 | `truncate` | A label that needs truncating is too long. Shorten it to one or two words. |
+| `disabled` | Disabled is a `type`, not a flag. It replaces the colours rather than dimming them, so it cannot combine with `solid` or `subtle`. |
 <!-- /GENERATED:absent -->
 
 ## Best practices
@@ -131,7 +133,7 @@ the surrounding loading region must announce the pending state. It honours
 - Icons are decorative and hidden from assistive technology, so an icon-only
   badge announces nothing.
 - `warning` keeps dark text because white fails contrast on its yellow.
-- `disabled` sets `aria-disabled` rather than removing the badge from the
+- `type="disabled"` sets `aria-disabled` rather than removing the badge from the
   accessibility tree.
 - Critical system states need supporting text in the interface, not just a badge.
 

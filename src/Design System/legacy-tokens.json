@@ -1,5 +1,5 @@
 {
-  "$description": "Delhivery design system tokens. Platform-agnostic source of truth in DTCG format. Run `npm run tokens:build` to regenerate tokens.css; never edit that file by hand.",
+  "$description": "DEPRECATED. The hand-authored tokens that predate the Figma export, kept only so components keep rendering while they are remapped onto the tokens generated from variables.json. Their CSS names are emitted verbatim under a `legacy` section of tokens.css. Delete this file once no component references a `--ds-space-*`, `--ds-variant-*` or `--ds-color-*` name.",
   "space": {
     "$type": "dimension",
     "$description": "Named by value: space.6 is 6px.",

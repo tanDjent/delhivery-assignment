@@ -1,62 +1,71 @@
 /**
  * Badge styles.
  *
- * Each variant only declares four local custom properties; the type modifiers
- * below decide which of them become background, text and border. Adding a
- * variant therefore never requires adding a type rule.
+ * Every colour comes from the mapped tier, and the pairing of variant to token
+ * is taken from the Figma component's own variable bindings rather than chosen
+ * here. Each variant declares the local custom properties below; the type
+ * modifiers decide which become background, text and border, so adding a colour
+ * never requires a new type rule.
+ *
+ * Because the mapped tier carries the light and dark modes, the badge themes
+ * itself with no dark-mode rules of its own.
  */
 
 .ds-badge {
-  /* Label sizes are Badge-specific rather than a shared type scale. */
-  --badge-font-size-small: 10px;
-  --badge-font-size-medium: 12px;
-  --badge-font-size-large: 16px;
-
-  --badge-solid-bg: var(--ds-variant-black-bg);
-  --badge-solid-fg: var(--ds-variant-black-text);
-  --badge-soft-bg: var(--ds-color-grey-100);
-  --badge-soft-fg: var(--ds-color-black);
-  --badge-line: var(--ds-color-grey-300);
+  --badge-solid-bg: var(--ds-surface-bg_primary_inverse-default);
+  --badge-solid-fg: var(--ds-text-body_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_primary-strongest);
+  --badge-subtle-fg: var(--ds-text-body-primary);
+  --badge-subtle-line: var(--ds-border-neutral-tertiary);
+  --badge-outlined-fg: var(--ds-text-body-primary);
+  --badge-outlined-line: var(--ds-border-neutral_inverse-primary);
+  --badge-disabled-fg: var(--ds-text-body-disabled);
+  --badge-disabled-line: var(--ds-border-neutral-disabled);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   max-width: 100%;
-  margin: var(--ds-space-0);
-  gap: var(--ds-space-2);
-  border: var(--ds-border-width) solid transparent;
-  border-radius: var(--ds-radius-md);
-  font-family: var(--ds-font-family);
-  font-weight: var(--ds-font-weight-medium);
-  line-height: 1;
+  margin: var(--ds-spacing-0);
+  gap: var(--ds-spacing-2);
+  border: var(--ds-stroke-default) solid transparent;
+  border-radius: var(--ds-radius-default);
   white-space: nowrap;
   vertical-align: middle;
 }
 
 /* ---------------------------------------------------------------- Sizes ---
- * The height of each step is fixed, so the padding below is the horizontal
- * inset and the intended breathing room above and below the label. Small
- * resolves exactly; at medium and large the label is 2px taller than the space
- * the padding leaves it, so the height wins and the effective vertical inset
- * lands 1px tighter than declared. */
+ * Heights are fixed, so the padding is the horizontal inset and the intended
+ * breathing room above and below the label. The label of each step is a named
+ * Figma text style, applied as the `font` shorthand. Icon and dot sizes are
+ * Badge's own, not a shared scale. */
 
 .ds-badge--small {
+  --badge-icon-size: 12px;
+  --badge-dot-size: 4px;
+
   height: 20px;
-  padding: var(--ds-space-4);
-  font-size: var(--badge-font-size-small);
+  padding: var(--ds-spacing-4);
+  font: var(--ds-typography-c2-caption2_default);
 }
 
 .ds-badge--medium {
+  --badge-icon-size: 12px;
+  --badge-dot-size: 4px;
+
   height: 24px;
-  padding: var(--ds-space-6);
-  font-size: var(--badge-font-size-medium);
+  padding: var(--ds-spacing-6);
+  font: var(--ds-typography-c2-caption2_default);
 }
 
 .ds-badge--large {
+  --badge-icon-size: 16px;
+  --badge-dot-size: 6px;
+
   height: 28px;
-  padding: var(--ds-space-6);
-  font-size: var(--badge-font-size-large);
+  padding: var(--ds-spacing-6);
+  font: var(--ds-typography-c1-caption1_default);
 }
 
 /* --------------------------------------------------------------- Layout --- */
@@ -65,14 +74,13 @@
   display: block;
 }
 
-/* 1em keeps the icon locked to the label size at every step. */
 .ds-badge__icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 1em;
-  height: 1em;
+  width: var(--badge-icon-size);
+  height: var(--badge-icon-size);
 }
 
 .ds-badge__icon > svg,
@@ -84,10 +92,10 @@
 
 .ds-badge__dot {
   flex: 0 0 auto;
-  width: 6px;
-  height: 6px;
-  border-radius: var(--ds-radius-full);
-  background-color: var(--ds-status-dot-color);
+  width: var(--badge-dot-size);
+  height: var(--badge-dot-size);
+  border-radius: var(--ds-radius-max);
+  background-color: var(--ds-surface-bg_success-default);
 }
 
 /* ---------------------------------------------------------------- Types --- */
@@ -99,29 +107,23 @@
 }
 
 .ds-badge--subtle {
-  background-color: var(--badge-soft-bg);
-  color: var(--badge-soft-fg);
-  border-color: var(--badge-soft-bg);
+  background-color: var(--badge-subtle-bg);
+  color: var(--badge-subtle-fg);
+  border-color: var(--badge-subtle-line);
 }
 
 .ds-badge--outlined {
   background-color: transparent;
-  color: var(--badge-outline-fg, var(--badge-soft-fg));
-  border-color: var(--badge-line);
+  color: var(--badge-outlined-fg);
+  border-color: var(--badge-outlined-line);
 }
 
-/* --------------------------------------------------------------- States --- */
-
+/* Disabled replaces the colours outright rather than dimming another type,
+   which is why it is a type and not a flag. */
 .ds-badge--disabled {
-  background-color: var(--badge-soft-bg);
-  color: var(--badge-soft-fg);
-  border-color: var(--badge-soft-bg);
-  opacity: 0.45;
-}
-
-.ds-badge--outlined.ds-badge--disabled {
   background-color: transparent;
-  border-color: var(--badge-line);
+  color: var(--badge-disabled-fg);
+  border-color: var(--badge-disabled-line);
 }
 
 /* ---------------------------------------------------------------- Ghost --- */
@@ -129,7 +131,7 @@
 .ds-badge--ghost {
   background-color: transparent;
   border-color: transparent;
-  padding: var(--ds-space-0);
+  padding: var(--ds-spacing-0);
   min-width: 64px;
   overflow: hidden;
 }
@@ -141,11 +143,12 @@
   border-radius: inherit;
   background-image: linear-gradient(
     90deg,
-    var(--ds-color-grey-200) 0%,
-    var(--ds-color-grey-100) 40%,
-    var(--ds-color-grey-200) 80%
+    var(--ds-surface-bg_primary-solid) 0%,
+    var(--ds-surface-bg_primary-strongest) 40%,
+    var(--ds-surface-bg_primary-solid) 80%
   );
   background-size: 200% 100%;
+  /* Figma defines no motion tokens, so this is the one legacy name left. */
   animation: ds-badge-shimmer 1.4s var(--ds-easing-standard) infinite;
 }
 
@@ -167,76 +170,109 @@
 /* ------------------------------------------------------------- Variants --- */
 
 .ds-badge--black {
-  --badge-solid-bg: var(--ds-variant-black-bg);
-  --badge-solid-fg: var(--ds-variant-black-text);
-  --badge-soft-bg: var(--ds-color-grey-100);
-  --badge-soft-fg: var(--ds-color-black);
-  --badge-line: var(--ds-color-grey-300);
+  --badge-solid-bg: var(--ds-surface-bg_primary_inverse-default);
+  --badge-solid-fg: var(--ds-text-body_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_primary-strongest);
+  --badge-subtle-fg: var(--ds-text-body-primary);
+  --badge-subtle-line: var(--ds-border-neutral-tertiary);
+  --badge-outlined-fg: var(--ds-text-body-primary);
+  --badge-outlined-line: var(--ds-border-neutral_inverse-primary);
+  --badge-disabled-fg: var(--ds-text-body-disabled);
+  --badge-disabled-line: var(--ds-border-neutral-disabled);
 }
 
-/* White is intended for dark surfaces, so it carries no border and its
-   outlined treatment is white on transparent. */
 .ds-badge--white {
-  --badge-solid-bg: var(--ds-variant-white-bg);
-  --badge-solid-fg: var(--ds-variant-white-text);
-  --badge-soft-bg: var(--ds-color-grey-200);
-  --badge-soft-fg: var(--ds-color-grey-600);
-  --badge-outline-fg: var(--ds-color-white);
-  --badge-line: var(--ds-color-white);
+  --badge-solid-bg: var(--ds-surface-bg_primary-default);
+  --badge-solid-fg: var(--ds-text-body-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_primary-subtle);
+  --badge-subtle-fg: var(--ds-text-body-primary);
+  --badge-subtle-line: var(--ds-border-neutral-tertiary);
+  --badge-outlined-fg: var(--ds-text-heading_inverse-primary);
+  --badge-outlined-line: var(--ds-border-neutral-primary);
+  --badge-disabled-fg: var(--ds-text-body_inverse-disabled);
+  --badge-disabled-line: var(--ds-border-neutral_inverse-disabled);
 }
 
 .ds-badge--coal {
-  --badge-solid-bg: var(--ds-variant-coal-bg);
-  --badge-solid-fg: var(--ds-variant-coal-text);
-  --badge-soft-bg: var(--ds-color-coal-50);
-  --badge-soft-fg: var(--ds-color-coal-700);
-  --badge-line: var(--ds-color-coal-200);
+  --badge-solid-bg: var(--ds-surface-bg_coal-default);
+  --badge-solid-fg: var(--ds-text-heading_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_coal-subtle);
+  --badge-subtle-fg: var(--ds-text-body-primary);
+  --badge-subtle-line: var(--ds-border-coal-primary);
+  --badge-outlined-fg: var(--ds-text-coal-primary);
+  --badge-outlined-line: var(--ds-border-coal-tertiary);
+  --badge-disabled-fg: var(--ds-text-coal-disabled);
+  --badge-disabled-line: var(--ds-border-neutral-disabled);
 }
 
 .ds-badge--dlvRed {
-  --badge-solid-bg: var(--ds-variant-dlv-red-bg);
-  --badge-solid-fg: var(--ds-variant-dlv-red-text);
-  --badge-soft-bg: var(--ds-color-dlv-red-50);
-  --badge-soft-fg: var(--ds-color-dlv-red-700);
-  --badge-line: var(--ds-color-dlv-red-200);
+  --badge-solid-bg: var(--ds-surface-bg_dlv_red-default);
+  --badge-solid-fg: var(--ds-text-heading_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_dlv_red-weaker);
+  --badge-subtle-fg: var(--ds-text-accent-secondary);
+  --badge-subtle-line: var(--ds-border-dlv_red-base);
+  --badge-outlined-fg: var(--ds-text-accent-primary);
+  --badge-outlined-line: var(--ds-border-dlv_red-primary);
+  --badge-disabled-fg: var(--ds-text-accent-disabled);
+  --badge-disabled-line: var(--ds-border-dlv_red-disabled);
 }
 
 .ds-badge--info {
-  --badge-solid-bg: var(--ds-variant-info-bg);
-  --badge-solid-fg: var(--ds-variant-info-text);
-  --badge-soft-bg: var(--ds-color-info-50);
-  --badge-soft-fg: var(--ds-color-info-700);
-  --badge-line: var(--ds-color-info-200);
+  --badge-solid-bg: var(--ds-surface-bg_blue-default);
+  --badge-solid-fg: var(--ds-text-heading_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_blue-weaker);
+  --badge-subtle-fg: var(--ds-text-info_blue-primary);
+  --badge-subtle-line: var(--ds-border-info-primary);
+  --badge-outlined-fg: var(--ds-text-info_blue-primary);
+  --badge-outlined-line: var(--ds-border-info-primary);
+  --badge-disabled-fg: var(--ds-text-info_blue-disabled);
+  --badge-disabled-line: var(--ds-border-info-disabled);
 }
 
 .ds-badge--success {
-  --badge-solid-bg: var(--ds-variant-success-bg);
-  --badge-solid-fg: var(--ds-variant-success-text);
-  --badge-soft-bg: var(--ds-color-success-50);
-  --badge-soft-fg: var(--ds-color-success-700);
-  --badge-line: var(--ds-color-success-200);
+  --badge-solid-bg: var(--ds-surface-bg_success-default);
+  --badge-solid-fg: var(--ds-text-heading_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_success-weaker);
+  --badge-subtle-fg: var(--ds-text-success-primary);
+  --badge-subtle-line: var(--ds-border-success-base);
+  --badge-outlined-fg: var(--ds-text-success-primary);
+  --badge-outlined-line: var(--ds-border-success-primary);
+  --badge-disabled-fg: var(--ds-text-success-disabled);
+  --badge-disabled-line: var(--ds-border-success-disabled);
 }
 
 .ds-badge--warning {
-  --badge-solid-bg: var(--ds-variant-warning-bg);
-  --badge-solid-fg: var(--ds-variant-warning-text);
-  --badge-soft-bg: var(--ds-color-warning-50);
-  --badge-soft-fg: var(--ds-color-warning-700);
-  --badge-line: var(--ds-color-warning-200);
+  --badge-solid-bg: var(--ds-surface-bg_warning-default);
+  --badge-solid-fg: var(--ds-text-warning-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_warning-weaker);
+  --badge-subtle-fg: var(--ds-text-warning-primary);
+  --badge-subtle-line: var(--ds-border-warning-base);
+  --badge-outlined-fg: var(--ds-text-warning-primary);
+  --badge-outlined-line: var(--ds-border-warning-tertiary);
+  --badge-disabled-fg: var(--ds-text-warning-disabled);
+  --badge-disabled-line: var(--ds-border-warning-disabled);
 }
 
 .ds-badge--error {
-  --badge-solid-bg: var(--ds-variant-error-bg);
-  --badge-solid-fg: var(--ds-variant-error-text);
-  --badge-soft-bg: var(--ds-color-error-50);
-  --badge-soft-fg: var(--ds-color-error-700);
-  --badge-line: var(--ds-color-error-200);
+  --badge-solid-bg: var(--ds-surface-bg_error-default);
+  --badge-solid-fg: var(--ds-text-body_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_error-weaker);
+  --badge-subtle-fg: var(--ds-text-error-primary);
+  --badge-subtle-line: var(--ds-border-error-base);
+  --badge-outlined-fg: var(--ds-text-error-primary);
+  --badge-outlined-line: var(--ds-border-error-primary);
+  --badge-disabled-fg: var(--ds-text-error-disabled);
+  --badge-disabled-line: var(--ds-border-error-disabled);
 }
 
 .ds-badge--cardbox {
-  --badge-solid-bg: var(--ds-variant-cardbox-bg);
-  --badge-solid-fg: var(--ds-variant-cardbox-text);
-  --badge-soft-bg: var(--ds-color-cardbox-50);
-  --badge-soft-fg: var(--ds-color-cardbox-700);
-  --badge-line: var(--ds-color-cardbox-200);
+  --badge-solid-bg: var(--ds-surface-bg_cardbox-default);
+  --badge-solid-fg: var(--ds-text-body_inverse-primary);
+  --badge-subtle-bg: var(--ds-surface-bg_cardbox-weaker);
+  --badge-subtle-fg: var(--ds-text-cardbox-tertiary);
+  --badge-subtle-line: var(--ds-border-cardbox-base);
+  --badge-outlined-fg: var(--ds-text-cardbox-primary);
+  --badge-outlined-line: var(--ds-border-cardbox-primary);
+  --badge-disabled-fg: var(--ds-text-cardbox-disabled);
+  --badge-disabled-line: var(--ds-border-cardbox-disabled);
 }

@@ -56,7 +56,9 @@ describe('Badge semantics', () => {
   })
 
   it('marks disabled badges with aria-disabled and no label loss', () => {
-    const { container, getByText } = render(<Badge label="Draft" disabled />)
+    const { container, getByText } = render(
+      <Badge label="Draft" type="disabled" />,
+    )
     const badge = container.firstElementChild as HTMLElement
     expect(badge.getAttribute('aria-disabled')).toBe('true')
     expect(badge.className).toContain('ds-badge--disabled')

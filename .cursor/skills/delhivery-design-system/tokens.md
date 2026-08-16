@@ -1,110 +1,143 @@
 # Tokens
 
-`tokens.json` is the source of truth. `tokens.css` is generated from it — edit
-the JSON and run `npm run tokens:build`.
+Everything comes out of Figma. `variables.json` is the variables export and
+`typography.json` the text styles, which Figma keeps separate and omits from a
+variables export. Both are inputs; `tokens.json` and `tokens.css` are generated
+by `npm run tokens:build` and must never be edited by hand.
 
-Component CSS must reference these `--ds-*` names and never a raw value. A value
-used by only one component belongs in that component's CSS as a `--<component>-*`
+Component CSS references `--ds-*` names and never a raw value. A value used by
+only one component belongs in that component's CSS as a `--<component>-*`
 property, not here.
+
+## The three tiers
+
+Figma's collections are preserved rather than flattened, and so are the
+references between them. Editing one primitive cascades exactly as it does in
+Figma.
+
+| Tier | Prefix | What it is |
+|---|---|---|
+| Brand | `--ds-brand-*` | Primitives: colour ramps, the numeric `scale`, font families and weights. Literal values. |
+| Alias | `--ds-alias-*` | Names for the primitives. Every value is a `var()` pointing at Brand. |
+| Mapped | unprefixed, e.g. `--ds-surface-*` | **The layer you consume.** Every value is a `var()` pointing at Alias. |
+
+Reach for the mapped tier. Only drop to Alias or Brand when nothing in the
+mapped tier expresses what you need, and treat that as a gap worth reporting.
+
+Names mirror Figma exactly, lowercased, with `/` becoming `-` and underscores
+kept: `Surface/BG_Primary/Default` is `--ds-surface-bg_primary-default`. If a
+designer names a token, you can find it by searching for that same string.
+
+## Mapped groups
+
+<!-- GENERATED:groups -->
+| Group | Tokens | Example |
+|---|---|---|
+| `surface` | 140 | `--ds-surface-bg_primary-default` |
+| `text` | 96 | `--ds-text-heading-disabled` |
+| `icon` | 96 | `--ds-icon-heading-disabled` |
+| `border` | 70 | `--ds-border-neutral-disabled` |
+| `shadow` | 9 | `--ds-shadow-default-primary` |
+| `spacing` | 15 | `--ds-spacing-0` |
+| `radius` | 7 | `--ds-radius-none` |
+| `stroke` | 6 | `--ds-stroke-none` |
+| `elevation` | 3 | `--ds-elevation-primary` |
+| `alpha` | 36 | `--ds-alpha-white-5` |
+<!-- /GENERATED:groups -->
+
+## Light and dark
+
+Light is the default, in `:root`. Dark is applied by `[data-theme="dark"]`, and
+by the operating system preference unless a theme has been set explicitly. Only
+the mapped tokens whose value actually differs are overridden.
+
+Because the mapped tier is the only one that carries modes, a component that
+consumes mapped tokens gets dark mode for free, and one that reaches past it
+into Brand or Alias does not. That is the practical reason to stay on the
+mapped tier.
 
 ## Spacing
 
-Named by value: `--ds-space-6` is 6px.
+Named by value: `--ds-spacing-6` is 6px.
 
-<!-- GENERATED:space -->
+<!-- GENERATED:spacing -->
 | Token | Value |
 |---|---|
-| `--ds-space-0` | 0px |
-| `--ds-space-2` | 2px |
-| `--ds-space-4` | 4px |
-| `--ds-space-6` | 6px |
-| `--ds-space-8` | 8px |
-| `--ds-space-12` | 12px |
-| `--ds-space-14` | 14px |
-| `--ds-space-16` | 16px |
-| `--ds-space-20` | 20px |
-| `--ds-space-24` | 24px |
-| `--ds-space-32` | 32px |
-| `--ds-space-40` | 40px |
-| `--ds-space-48` | 48px |
-| `--ds-space-64` | 64px |
-| `--ds-space-80` | 80px |
-<!-- /GENERATED:space -->
+| `--ds-spacing-0` | 0px |
+| `--ds-spacing-2` | 2px |
+| `--ds-spacing-4` | 4px |
+| `--ds-spacing-6` | 6px |
+| `--ds-spacing-8` | 8px |
+| `--ds-spacing-12` | 12px |
+| `--ds-spacing-14` | 14px |
+| `--ds-spacing-16` | 16px |
+| `--ds-spacing-20` | 20px |
+| `--ds-spacing-24` | 24px |
+| `--ds-spacing-32` | 32px |
+| `--ds-spacing-40` | 40px |
+| `--ds-spacing-48` | 48px |
+| `--ds-spacing-64` | 64px |
+| `--ds-spacing-80` | 80px |
+<!-- /GENERATED:spacing -->
 
-## Variant colours
+## Radius and stroke
 
-Background and text pairs, one per variant. These drive the solid type.
-
-<!-- GENERATED:variants -->
-| Variant | Background | Text |
-|---|---|---|
-| `black` | `#000000` | `#e6e6e6` |
-| `white` | `#ffffff` | `#2b2b2b` |
-| `coal` | `#64739b` | `#f2f2f2` |
-| `dlvRed` | `#ed1b36` | `#f2f2f2` |
-| `info` | `#2396fb` | `#f2f2f2` |
-| `success` | `#1ba86e` | `#f2f2f2` |
-| `warning` | `#f5c828` | `#7b6414` |
-| `error` | `#dc143c` | `#f2f2f2` |
-| `cardbox` | `#b88b5c` | `#e6e6e6` |
-<!-- /GENERATED:variants -->
-
-## Palette
-
-Neutrals, plus the tint ramps used by the subtle and outlined types.
-
-<!-- GENERATED:palette -->
-- `--ds-color-black` #101828
-- `--ds-color-white` #ffffff
-- `--ds-color-grey-50` #f9fafb
-- `--ds-color-grey-100` #f2f4f7
-- `--ds-color-grey-200` #e4e7ec
-- `--ds-color-grey-300` #d0d5dd
-- `--ds-color-grey-400` #98a2b3
-- `--ds-color-grey-500` #667085
-- `--ds-color-grey-600` #475467
-- `--ds-color-coal-50` #eef1f8
-- `--ds-color-coal-200` #c6cde3
-- `--ds-color-coal-700` #3a4462
-- `--ds-color-dlv-red-50` #fdebec
-- `--ds-color-dlv-red-200` #f7c2c5
-- `--ds-color-dlv-red-500` #e1252c
-- `--ds-color-dlv-red-700` #9e161c
-- `--ds-color-info-50` #eaf4fd
-- `--ds-color-info-200` #bcdcf8
-- `--ds-color-info-500` #1a7fd4
-- `--ds-color-info-700` #10507f
-- `--ds-color-success-50` #e7f6ef
-- `--ds-color-success-200` #b3e3cd
-- `--ds-color-success-500` #0f8a5f
-- `--ds-color-success-700` #08543a
-- `--ds-color-warning-50` #fdf5e0
-- `--ds-color-warning-200` #f8e3a8
-- `--ds-color-warning-700` #8a6d00
-- `--ds-color-error-50` #fdeaef
-- `--ds-color-error-200` #f8bfd0
-- `--ds-color-error-700` #85103b
-- `--ds-color-cardbox-50` #f7f0e6
-- `--ds-color-cardbox-200` #e5d0b0
-- `--ds-color-cardbox-700` #6b4f2d
-<!-- /GENERATED:palette -->
-
-## Radius, borders, motion and weight
-
-<!-- GENERATED:other -->
+<!-- GENERATED:shape -->
 | Token | Value |
 |---|---|
-| `--ds-radius-sm` | 3px |
-| `--ds-radius-md` | 4px |
-| `--ds-radius-full` | 999px |
-| `--ds-border-width` | 1px |
-| `--ds-status-dot-color` | #1ba86e |
-| `--ds-font-weight-medium` | 500 |
-| `--ds-font-weight-semibold` | 600 |
-| `--ds-duration-fast` | 120ms |
-<!-- /GENERATED:other -->
+| `--ds-radius-none` | 0px |
+| `--ds-radius-small` | 2px |
+| `--ds-radius-default` | 4px |
+| `--ds-radius-medium` | 8px |
+| `--ds-radius-large` | 12px |
+| `--ds-radius-xlarage` | 16px |
+| `--ds-radius-max` | 999px |
+| `--ds-stroke-none` | 0px |
+| `--ds-stroke-small` | 0.5px |
+| `--ds-stroke-default` | 1px |
+| `--ds-stroke-medium` | 1.5px |
+| `--ds-stroke-large` | 2px |
+| `--ds-stroke-xlarage` | 4px |
+<!-- /GENERATED:shape -->
 
 ## Typography
 
-`--ds-font-family` is Noto Sans with a system fallback stack, self-hosted via
-`@fontsource/noto-sans` and imported in `src/main.tsx`.
+One set of properties per Figma text style, plus a shorthand suitable for the
+CSS `font` property. `--ds-typography-c2-caption2_default-font-size` is the size
+of `C2/caption2_default`.
+
+Noto Sans is self-hosted via `@fontsource/noto-sans` and imported in
+`src/main.tsx`. The `Utility/*` styles specify IBM Plex Sans, which is **not**
+currently bundled — avoid them until it is.
+
+<!-- GENERATED:typography -->
+| Token | Family | Size | Weight | Line height |
+|---|---|---|---|---|
+| `--ds-typography-b1-body1_default` | Noto Sans | 16px | 500 | 24px |
+| `--ds-typography-b1-body1_regular` | Noto Sans | 16px | 400 | 24px |
+| `--ds-typography-b2-body2_default` | Noto Sans | 14px | 500 | 20px |
+| `--ds-typography-b2-body2_semibold` | Noto Sans | 14px | 600 | 20px |
+| `--ds-typography-c1-caption1_default` | Noto Sans | 12px | 500 | 16px |
+| `--ds-typography-c1-caption1_light` | Noto Sans | 12px | 300 | 16px |
+| `--ds-typography-c1-caption1_regular` | Noto Sans | 12px | 400 | 16px |
+| `--ds-typography-c2-caption2_default` | Noto Sans | 10px | 500 | 12px |
+| `--ds-typography-display-display_bold` | Noto Sans | 48px | 700 | 58px |
+| `--ds-typography-display-display_medium` | Noto Sans | 48px | 500 | 58px |
+| `--ds-typography-display-display_semibold` | Noto Sans | 48px | 600 | 58px |
+| `--ds-typography-h2-heading2_semibold` | Noto Sans | 34px | 600 | 44px |
+| `--ds-typography-h4-heading4_default` | Noto Sans | 24px | 500 | 32px |
+| `--ds-typography-h4-heading4_regular` | Noto Sans | 24px | 400 | 32px |
+| `--ds-typography-h4-heading4_semibold` | Noto Sans | 24px | 600 | 32px |
+| `--ds-typography-h5-heading5_default` | Noto Sans | 20px | 500 | 26px |
+| `--ds-typography-h5-heading5_semibold` | Noto Sans | 20px | 600 | 26px |
+| `--ds-typography-utility-badges` | IBM Plex Sans | 12px | 500 | 16px |
+| `--ds-typography-utility-helpertext` | IBM Plex Sans | 12px | 400 | 16px |
+| `--ds-typography-utility-label` | IBM Plex Sans | 14px | 500 | 20px |
+<!-- /GENERATED:typography -->
+
+## Legacy names
+
+`--ds-space-*`, `--ds-variant-*`, `--ds-color-*`, `--ds-radius-sm|md|full` and
+`--ds-font-*` predate the Figma export. They still resolve so that existing
+components keep rendering, but they are being migrated away. Do not use them in
+new work.

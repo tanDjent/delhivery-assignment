@@ -1,0 +1,234 @@
+{
+  "$description": "Figma text styles, extracted from the TDS file with the REST API. Text styles are not variables, so they are absent from variables.json and must be captured separately. Source of truth for the type scale; regenerate with scripts/fetch-typography.mjs when the styles change in Figma.",
+  "figmaFileKey": "TYR1QoZKa0Hw3s9MSvFDG2",
+  "extractedAt": "2026-08-16",
+  "units": {
+    "fontSize": "px",
+    "lineHeight": "px",
+    "letterSpacing": "px"
+  },
+  "styles": {
+    "B1/body1_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 16,
+      "lineHeight": 24,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "875:16130"
+      ]
+    },
+    "B1/body1_regular": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontStyle": "Regular",
+      "fontSize": 16,
+      "lineHeight": 24,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "1823:4504"
+      ]
+    },
+    "B2/body2_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "875:16135"
+      ]
+    },
+    "B2/body2_semibold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontStyle": "SemiBold",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "1823:56916"
+      ]
+    },
+    "C1/caption1_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "876:16140"
+      ]
+    },
+    "C1/caption1_light": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 300,
+      "fontStyle": "Light",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "1802:3148"
+      ]
+    },
+    "C1/caption1_regular": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontStyle": "Regular",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "876:16141"
+      ]
+    },
+    "C2/caption2_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 10,
+      "lineHeight": 12,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "3537:195395",
+        "876:16145"
+      ]
+    },
+    "Display/Display_bold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 700,
+      "fontStyle": "Bold",
+      "fontSize": 48,
+      "lineHeight": 58,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16020"
+      ]
+    },
+    "Display/Display_medium": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 48,
+      "lineHeight": 58,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16019"
+      ]
+    },
+    "Display/Display_semibold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontStyle": "SemiBold",
+      "fontSize": 48,
+      "lineHeight": 58,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "1802:3282"
+      ]
+    },
+    "H2/heading2_semibold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontStyle": "SemiBold",
+      "fontSize": 34,
+      "lineHeight": 44,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16049"
+      ]
+    },
+    "H4/heading4_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 24,
+      "lineHeight": 32,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16108"
+      ]
+    },
+    "H4/heading4_regular": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 400,
+      "fontStyle": "Regular",
+      "fontSize": 24,
+      "lineHeight": 32,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16109"
+      ]
+    },
+    "H4/heading4_semibold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontStyle": "SemiBold",
+      "fontSize": 24,
+      "lineHeight": 32,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16105"
+      ]
+    },
+    "H5/heading5_default": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 20,
+      "lineHeight": 26,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16117",
+        "1802:3156"
+      ]
+    },
+    "H5/heading5_semibold": {
+      "fontFamily": "Noto Sans",
+      "fontWeight": 600,
+      "fontStyle": "SemiBold",
+      "fontSize": 20,
+      "lineHeight": 26,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "874:16116"
+      ]
+    },
+    "Utility/badges": {
+      "fontFamily": "IBM Plex Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "410:8627"
+      ]
+    },
+    "Utility/helpertext": {
+      "fontFamily": "IBM Plex Sans",
+      "fontWeight": 400,
+      "fontStyle": "Regular",
+      "fontSize": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "410:10086"
+      ]
+    },
+    "Utility/label": {
+      "fontFamily": "IBM Plex Sans",
+      "fontWeight": 500,
+      "fontStyle": "Medium",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0,
+      "figmaNodeIds": [
+        "410:6727"
+      ]
+    }
+  }
+}

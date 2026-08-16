@@ -18,7 +18,6 @@ interface PlaygroundState {
   statusDot: boolean
   leadingIcon: boolean
   trailingIcon: boolean
-  disabled: boolean
 }
 
 const INITIAL: PlaygroundState = {
@@ -29,7 +28,6 @@ const INITIAL: PlaygroundState = {
   statusDot: false,
   leadingIcon: false,
   trailingIcon: false,
-  disabled: false,
 }
 
 function buildCode(state: PlaygroundState) {
@@ -42,7 +40,6 @@ function buildCode(state: PlaygroundState) {
   if (state.statusDot) lines.push('  statusDot')
   if (state.leadingIcon) lines.push('  leadingIcon={<InfoCircleIcon />}')
   if (state.trailingIcon) lines.push('  trailingIcon={<PlusCircleIcon />}')
-  if (state.disabled) lines.push('  disabled')
   return `<Badge\n${lines.join('\n')}\n/>`
 }
 
@@ -172,13 +169,6 @@ export function PropertiesTab() {
         onChange={(value) => set('trailingIcon', value)}
       />
     ),
-    disabled: (
-      <Switch
-        label="disabled"
-        checked={state.disabled}
-        onChange={(value) => set('disabled', value)}
-      />
-    ),
   }
 
   return (
@@ -191,7 +181,6 @@ export function PropertiesTab() {
             type={state.type}
             size={state.size}
             statusDot={state.statusDot}
-            disabled={state.disabled}
             leadingIcon={state.leadingIcon ? <InfoCircleIcon /> : undefined}
             trailingIcon={state.trailingIcon ? <PlusCircleIcon /> : undefined}
           />

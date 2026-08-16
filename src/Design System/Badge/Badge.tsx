@@ -8,8 +8,8 @@ import './Badge.css'
  * element like a row, card or header. They never carry their own action;
  * tapping the row or card is the interaction, not the badge.
  *
- * Nine colour variants, four visual types, three sizes, a disabled state and
- * optional icons, so meaning and emphasis can be tuned independently.
+ * Nine colour variants, five visual types, three sizes and optional icons, so
+ * meaning and emphasis can be tuned independently.
  */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   {
@@ -20,7 +20,6 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     leadingIcon,
     trailingIcon,
     statusDot = false,
-    disabled = false,
     className,
     ...rest
   },
@@ -31,7 +30,6 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     `ds-badge--${variant}`,
     `ds-badge--${type}`,
     `ds-badge--${size}`,
-    disabled && 'ds-badge--disabled',
     className,
   ]
     .filter(Boolean)
@@ -52,7 +50,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       {...rest}
       ref={ref}
       className={classes}
-      aria-disabled={disabled || undefined}
+      aria-disabled={type === 'disabled' || undefined}
     >
       {statusDot ? <span className="ds-badge__dot" aria-hidden="true" /> : null}
       {leadingIcon ? (

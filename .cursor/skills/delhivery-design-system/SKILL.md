@@ -24,14 +24,17 @@ npm run ds:component -- badge
 
 ## Non-negotiables
 
-1. **No colour value outside the tokens.** Component CSS must reach for
-   `var(--ds-variant-*)` or `var(--ds-color-*)`, never a hex. Padding, gap and
-   margin must use `var(--ds-space-*)`; radius must use `var(--ds-radius-*)`.
-   See [tokens.md](tokens.md). Both rules are enforced by tests.
-2. **`tokens.css` is generated.** Edit `tokens.json`, then run
-   `npm run tokens:build`. Never hand-edit the CSS.
-3. **Values used by one component belong to that component.** Badge label sizes
-   live in `Badge.css` as `--badge-font-size-*`, not in the shared tokens.
+1. **No colour value outside the tokens**, and no raw dimension either. Reach
+   for the mapped tier — `var(--ds-surface-*)`, `var(--ds-text-*)`,
+   `var(--ds-border-*)`, `var(--ds-spacing-*)`, `var(--ds-radius-*)` — which is
+   the only tier that carries dark mode. See [tokens.md](tokens.md). Enforced by
+   tests.
+2. **`tokens.json` and `tokens.css` are both generated** from the Figma exports
+   `variables.json` and `typography.json`. Run `npm run tokens:build`. Never
+   hand-edit either output; a token that is wrong is wrong in Figma.
+3. **Values used by one component belong to that component.** Badge's icon and
+   dot sizes live in `Badge.css` as `--badge-icon-size` and `--badge-dot-size`,
+   not in the shared tokens.
 4. **Plain CSS only.** No CSS-in-JS, no utility classes, no preprocessor.
 5. **Ask before adding a dependency.**
 6. **A component's public surface is declared in its `*.meta.ts`.** Change that

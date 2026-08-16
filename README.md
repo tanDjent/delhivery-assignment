@@ -52,8 +52,11 @@ or it will eventually lie.**
 
 ```
 src/Design System/
-  tokens.json                 source of truth for every design value
-  tokens.css                  GENERATED from tokens.json
+  variables.json              Figma variables export: Brand, Alias, DLV_Mapped
+  typography.json             Figma text styles, fetched separately (see below)
+  legacy-tokens.json          pre-Figma tokens, kept until components are remapped
+  tokens.json                 GENERATED, DTCG format
+  tokens.css                  GENERATED, three tiers plus light and dark
   Badge/
     badge.meta.ts             source of truth for the public API
     Badge.tsx / .types.ts / .css
@@ -75,8 +78,19 @@ Two sources of truth, four consumers:
 
 | Source | Consumers |
 |---|---|
-| `tokens.json` | `tokens.css`, `tokens.md`, the token tests |
+| `variables.json` + `typography.json` | `tokens.json`, then `tokens.css`, `tokens.md` and the token tests |
 | `badge.meta.ts` | the props table in `components/badge.md`, the playground's Properties table, the drift tests |
+
+Design values come straight out of Figma. `variables.json` is the variables
+export, three collections deep: Brand holds the primitives, Alias names them,
+and DLV_Mapped is the layer components consume, carrying the light and dark
+modes. That chain survives into CSS as nested `var()` references, so editing one
+primitive cascades exactly as it does in Figma, and dark mode is a property of
+the mapped tier rather than a second stylesheet.
+
+Text styles are not variables in Figma and are absent from that export, so
+`typography.json` is fetched from the REST API by
+`scripts/fetch-typography.mjs` and committed, which keeps the build offline.
 
 Because the playground's interactive props table and the published props table
 are built from the same file, the documentation site cannot describe a prop the
@@ -108,7 +122,7 @@ names itself.
 | Check | Catches |
 |---|---|
 | `lint` | the usual |
-| `tokens:check` | `tokens.css` hand-edited, or `tokens.json` changed without regenerating |
+| `tokens:check` | `tokens.json` or `tokens.css` hand-edited, or a Figma export refreshed without regenerating |
 | `docs:check` | docs stale against `badge.meta.ts` or `tokens.json` |
 | `test` | 43 tests: badge semantics, geometry, token discipline, metadata drift |
 | `build` | typecheck and bundle |
