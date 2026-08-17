@@ -119,6 +119,13 @@
   font-size: 14px;
 }
 
+/* A turn within a section, for a point that would be lost as another paragraph. */
+.section__heading {
+  margin: 40px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .section__body {
   margin: 16px 0 0;
   max-width: 68ch;
@@ -129,8 +136,14 @@
   margin-top: 24px;
 }
 
+/* A tab that opens with prose rather than a display area sits closer to the tabs. */
+.section--first {
+  margin-top: 32px;
+}
+
 /* Inline code in prose. The block form is .code, which is a different thing. */
-.section__body code {
+.section__body code,
+.section__subtitle code {
   padding: 1px 5px;
   border-radius: var(--ds-radius-small);
   background: var(--ds-surface-bg_primary-strong);
@@ -217,6 +230,41 @@
 .practices__text {
   color: var(--ds-text-body-tertiary);
   font-size: 14px;
+}
+
+.practices__text code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+.grade__note {
+  color: var(--ds-text-caption-secondary);
+}
+
+/* ------------------------------------------------------------- Eval stage --- */
+
+/* Holds the committed agent output. It is a block of its own layout, so it gets
+   a plain padded surface rather than the centred row an example preview uses. */
+.showcase__stage {
+  padding: 24px;
+  border-bottom: 1px solid var(--ds-border-neutral-primary);
+  background: var(--ds-surface-bg_primary-strongest);
+  overflow-x: auto;
+}
+
+.showcase__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--ds-surface-bg_primary-default);
+  color: var(--ds-text-caption-secondary);
+  font-size: 13px;
+}
+
+.showcase__bar code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
 }
 
 /* ---------------------------------------------------------- Example card --- */

@@ -1,0 +1,34 @@
+/* Renders eval/run-1/ as it looked on the day it was produced.
+ *
+ * That run predates the move to the Figma-generated tokens, so its stylesheet
+ * spells the token names the docs used at the time — --ds-space-8 rather than
+ * --ds-spacing-8, --ds-color-* rather than surface, text and border. Those names
+ * are gone. Editing the agent's output to suit the current names would destroy
+ * the record, so the names are answered here instead, scoped to the one element
+ * that wraps the artifact.
+ *
+ * This is not a compatibility layer the design system offers. Nothing outside
+ * .eval-output may name these, and the next eval run makes the file dead. */
+
+.eval-output {
+  --ds-font-family: var(--ds-typography-b2-body2_default-font-family);
+  --ds-font-weight-medium: var(--ds-typography-b2-body2_default-font-weight);
+  --ds-font-weight-semibold: var(--ds-typography-b2-body2_semibold-font-weight);
+
+  --ds-space-0: var(--ds-spacing-0);
+  --ds-space-4: var(--ds-spacing-4);
+  --ds-space-6: var(--ds-spacing-6);
+  --ds-space-8: var(--ds-spacing-8);
+  --ds-space-12: var(--ds-spacing-12);
+  --ds-space-16: var(--ds-spacing-16);
+
+  --ds-radius-md: var(--ds-radius-medium);
+  --ds-border-width: var(--ds-stroke-default);
+
+  --ds-color-black: var(--ds-text-heading-primary);
+  --ds-color-white: var(--ds-surface-bg_primary-default);
+  --ds-color-grey-600: var(--ds-text-body-secondary);
+  --ds-color-grey-500: var(--ds-text-caption-secondary);
+  --ds-color-grey-200: var(--ds-border-neutral-secondary);
+  --ds-color-grey-100: var(--ds-border-neutral-primary);
+}

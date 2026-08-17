@@ -34,6 +34,7 @@ against the current docs, not a patch.
 Mechanical checks — `npm run eval:check` typechecks the output against the real
 component types, so an invented prop or an impossible variant fails the build:
 
+<!-- GENERATED:mechanical -->
 | Check | Result |
 |---|---|
 | Typechecks against the real `BadgeProps` | **pass** |
@@ -41,9 +42,11 @@ component types, so an invented prop or an impossible variant fails the build:
 | No colour value outside the tokens | **pass** |
 | Padding, gap, margin and radius from the token scale | **pass** |
 | Values used by one component kept local, not added to `tokens.json` | **pass** |
+<!-- /GENERATED:mechanical -->
 
 Judgement checks — did it follow the guidance the docs put the most weight on:
 
+<!-- GENERATED:judgement -->
 | Guidance | Result |
 |---|---|
 | Badge is never interactive | **pass** — no handler, no focusable wrapper |
@@ -53,12 +56,20 @@ Judgement checks — did it follow the guidance the docs put the most weight on:
 | A `ghost` badge needs a loading region that announces itself | **pass** — added `role="status"` and `aria-busy`, which the prompt never asked for |
 | A critical state needs supporting text, not just a badge | **pass** — wrote explanatory copy for the Delayed and RTO rows, which the prompt never asked for |
 | `dlvRed` is brand identity, not a second error colour | **pass** — used `error` for RTO and never reached for `dlvRed` |
-| Status *and* tier may both be badged | **pass** — Priority sits beside the status |
-| **Badge only the exceptional states** | **fail** — but caused by a contradictory example in my docs, which the agent flagged; see below |
+| Status and tier may both be badged | **pass** — Priority sits beside the status |
+| Badge only the exceptional states | **fail** — the rule and the example beneath it disagreed, and the agent flagged the contradiction |
+<!-- /GENERATED:judgement -->
 
-Ten of eleven. The two unprompted passes are the interesting ones: nothing in the
-task mentioned screen readers or supporting copy, so the accessibility section of
-the component doc is doing real work.
+<!-- GENERATED:score -->
+Eight of nine judgement checks pass.
+<!-- /GENERATED:score -->
+
+The two unprompted passes are the interesting ones: nothing in the task mentioned
+screen readers or supporting copy, so the accessibility section of the component
+doc is doing real work.
+
+Both tables come from [run-1/grade.json](run-1/grade.json), which the Showcase
+tab of the docs site reads as well, so the grade is stated once.
 
 ## The failure was mine, not the agent's
 
@@ -95,6 +106,7 @@ Two lessons, both of which changed the docs:
 2. **A judgement rule should be a decision procedure, not advice.** "Badge only
    the exceptional states" is advice. "If a status is the healthy default, render
    it as text — see the example" is an instruction with a testable outcome.
+   Whether it is the *right* instruction is a separate matter, taken up below.
 
 I rewrote the offending example and the rule accordingly. Round 2 is a re-run of
 the same prompt against the corrected docs, which is the actual payoff of having
@@ -109,6 +121,42 @@ output rather than by whether it reads well.
 - **No variant is named for priority or tier**, so it inferred `black` from
   "neutral emphasis / metadata". Reasonable, but the doc should say.
 
+## The rule itself is still wrong
+
+Making the rule and the example agree settled the contradiction, not the question
+underneath it. In an operations table the status column is usually badged on every
+row, `Delivered` included: a column where some cells are pills and others are bare
+text reads as ragged, or as though the plain rows are missing their value, and a
+uniform chip is what lets the column be scanned. On that reading the agent's output
+is the one a developer would ask for, and the graded fail is a fail against a rule
+that should not have been written that way.
+
+"Badge only the exceptional states" answers the wrong question. What decides it is
+the job the badge is doing:
+
+| The badge is | Then | Example |
+|---|---|---|
+| the format of a column — every row has a value and colour ranks them | badge every row, healthy default included | a status column in a tracking table |
+| a marker laid on content that is otherwise plain | badge only the rows that deviate | priority, held, COD |
+
+Neither the rule nor the example draws that line, so the doc reads as though the
+first case does not exist.
+
+It cannot be drawn in prose alone, which is where this stops being a documentation
+task:
+
+1. **The variants need a deliberate emphasis order.** A fully badged column only
+   works if `success` recedes while `warning` and `error` come forward. That is a
+   decision in Figma about the palette, not a sentence in a doc.
+2. **The palette has no in-progress state**, as above, which is why `In Transit`
+   had to borrow `info`.
+3. **There is no named table pattern** for either the library or the doc to point
+   at, so every team will infer the column convention for itself.
+
+All three belong with the designer before the rule is written a third time. That is
+the useful kind of finding for an eval to produce: not a typo, but a distinction the
+design system has not made yet.
+
 ## Gaps in the docs this surfaced
 
 1. **The docs never said which types are exported.** The props table names
@@ -119,8 +167,10 @@ output rather than by whether it reads well.
    what the entry point is.
 
 Both were factual omissions rather than matters of judgement, so I fixed them in
-`components/badge.md` after this run. The weak judgement rule is deliberately left
-as it is, so that round 2 has something to measure.
+`components/badge.md` after this run, along with the contradiction between the rule
+and its example. The rule's deeper problem stays open, because it waits on the
+palette decisions above rather than on better wording. Round 2 measures whether the
+edits already made change what an agent builds.
 
 ## Re-running
 

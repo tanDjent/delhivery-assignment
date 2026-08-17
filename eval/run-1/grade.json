@@ -1,0 +1,53 @@
+{
+  "$comment": "The grade for run-1, hand-written once and read twice: build-docs.mjs fills the tables in eval/README.md from it, and the playground's Showcase tab renders it. Notes may use backticks for code; no other markup, since one of the two readers is not a markdown renderer.",
+  "run": "run-1",
+  "mechanical": [
+    { "name": "Typechecks against the real `BadgeProps`", "result": "pass" },
+    { "name": "No prop or variant that does not exist", "result": "pass" },
+    { "name": "No colour value outside the tokens", "result": "pass" },
+    { "name": "Padding, gap, margin and radius from the token scale", "result": "pass" },
+    {
+      "name": "Values used by one component kept local, not added to `tokens.json`",
+      "result": "pass"
+    }
+  ],
+  "judgement": [
+    {
+      "name": "Badge is never interactive",
+      "result": "pass",
+      "note": "no handler, no focusable wrapper"
+    },
+    { "name": "Labels stay to one or two words", "result": "pass" },
+    {
+      "name": "One size and one type within a group",
+      "result": "pass",
+      "note": "every badge is `small` and `subtle`"
+    },
+    { "name": "`ghost` only as a loading placeholder", "result": "pass" },
+    {
+      "name": "A `ghost` badge needs a loading region that announces itself",
+      "result": "pass",
+      "note": "added `role=\"status\"` and `aria-busy`, which the prompt never asked for"
+    },
+    {
+      "name": "A critical state needs supporting text, not just a badge",
+      "result": "pass",
+      "note": "wrote explanatory copy for the Delayed and RTO rows, which the prompt never asked for"
+    },
+    {
+      "name": "`dlvRed` is brand identity, not a second error colour",
+      "result": "pass",
+      "note": "used `error` for RTO and never reached for `dlvRed`"
+    },
+    {
+      "name": "Status and tier may both be badged",
+      "result": "pass",
+      "note": "Priority sits beside the status"
+    },
+    {
+      "name": "Badge only the exceptional states",
+      "result": "fail",
+      "note": "the rule and the example beneath it disagreed, and the agent flagged the contradiction"
+    }
+  ]
+}

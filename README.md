@@ -250,7 +250,7 @@ says what it is.
 | `tokens:check` | a generated token file edited by hand, or a Figma export refreshed without rebuilding |
 | `spec:check` | `badge.spec.json` out of date with the API or with Figma |
 | `docs:check` | docs out of date with the API or the tokens |
-| `test` | 85 tests: markup, sizes, token discipline, docs matching code, and the badge matching its description |
+| `test` | 91 tests: markup, sizes, token discipline, docs matching code, the badge matching its description, and the eval output still rendering |
 | `build` | typecheck and bundle |
 | `eval:check` | the screen an agent wrote still compiles against the real types |
 
@@ -268,15 +268,22 @@ the eval.
 ## Can an agent actually use it?
 
 See [eval/README.md](eval/README.md) for the prompt, the rules, the output and the
-score.
+score. The Showcase tab of the playground is the same thing to look at rather than
+read: the prompt, the agent's component running live from the file it wrote, and
+the grade.
 
 The short version: a fresh agent was allowed to read the docs and nothing else —
 no component source, no types, no CSS — and asked to build a shipment tracking
 list with statuses, priority markers, a presence indicator and a loading state.
 What it produced is committed as `eval/run-1/`, graded by typechecking against the
 real types and by reading whether it followed the judgement calls the docs push
-hardest. It scored ten of eleven, and the one failure turned out to be a
-contradiction in my own docs, which the agent had spotted and said so.
+hardest. It passed eight of the nine judgement calls, and the one failure turned
+out to be a contradiction in my own docs, which the agent had spotted and said so.
+
+The grade is written once, in `eval/run-1/grade.json`. The tables in the write-up
+are generated from it and the Showcase tab reads the same file, so the score can't
+say two different things in two places — which is how it came to say eleven checks
+when there were nine.
 
 ## The component itself
 

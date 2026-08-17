@@ -2,9 +2,11 @@
 /**
  * Fills the generated blocks in the agent-facing docs.
  *
- * The API tables come from badge.meta.ts and the token tables from the tokens,
- * so the terse rules an agent reads first can never disagree with the detailed
- * component doc. Prose outside the markers is hand-written and preserved.
+ * The API tables come from badge.meta.ts, the token tables from the tokens and
+ * the eval tables from grade.json, so the terse rules an agent reads first can
+ * never disagree with the detailed component doc, and the eval write-up can
+ * never disagree with the Showcase tab. Prose outside the markers is
+ * hand-written and preserved.
  *
  * Run with --check in CI to fail when a doc has drifted from its source.
  */
@@ -28,6 +30,10 @@ const tokens = {
     await readFile(join(root, 'src/Design System/tokens.json'), 'utf8'),
   ),
 }
+
+const grade = JSON.parse(
+  await readFile(join(root, 'eval/run-1/grade.json'), 'utf8'),
+)
 
 const code = (value) => `\`${value}\``
 /** Union values as separate code spans, so no pipe breaks the table. */
@@ -149,6 +155,27 @@ const blocks = {
   },
 }
 
+/** Grade tables. The check name already carries its own code spans. */
+const checkTable = (heading, checks) =>
+  table(
+    [heading, 'Result'],
+    checks.map((check) => [
+      check.name,
+      check.note ? `**${check.result}** — ${check.note}` : `**${check.result}**`,
+    ]),
+  )
+
+const WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
+  'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve']
+
+/** Written out, because it opens a sentence in the write-up. */
+const spell = (n) => WORDS[n] ?? String(n)
+
+const score = () => {
+  const passed = grade.judgement.filter((c) => c.result === 'pass').length
+  return `${spell(passed)} of ${spell(grade.judgement.length).toLowerCase()} judgement checks pass.`
+}
+
 /** One index, linked relative to whichever file it is injected into. */
 const componentIndex = (fromDir) =>
   table(
@@ -172,6 +199,14 @@ const targets = [
   {
     path: join(root, 'AGENTS.md'),
     content: { components: componentIndex(root) },
+  },
+  {
+    path: join(root, 'eval/README.md'),
+    content: {
+      mechanical: checkTable('Check', grade.mechanical),
+      judgement: checkTable('Guidance', grade.judgement),
+      score: score(),
+    },
   },
 ]
 
