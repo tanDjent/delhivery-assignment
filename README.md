@@ -1,203 +1,288 @@
-# Delhivery Design System — LLM-first component workflow
+# Delhivery Design System — a component built for AI agents to use
 
-A prototype of one design-system component, `Badge`, built so that a large
-language model can use it correctly without a human explaining it first.
+One design-system component, `Badge`, built so that an AI coding agent can use it
+correctly without a person explaining it first.
 
-The component is the smaller half of the work. The larger half is the
-documentation, retrieval and verification loop around it: a single source of
-truth for the component's public surface, docs generated from that source,
-three ways for an agent to retrieve them, an eval that measures whether an agent
-can actually build UI from the docs alone, and CI that fails when any of it
-drifts apart.
+The component itself is the smaller half of the work. The larger half is
+everything around it: one place where the component's public surface is defined,
+documentation generated from that place, three ways for an agent to find that
+documentation, a test of whether an agent can actually build a screen from it,
+and CI that fails the moment any copy of a fact disagrees with another.
 
 **Live playground:** <https://delhivery-assignment.vercel.app/>
 
 ```
 npm install
 npm run dev       # playground on :5173
-npm run verify    # lint, generated-file drift, tests, build
+npm run verify    # lint, stale generated files, tests, build
 ```
 
 ## What I took from the systems I looked at
 
-Meta's Astryx is the closest reference for the AI-first framing, and its
-retrieval model is the part worth copying. Component documentation is not
-pasted into a rules file; it is fetched on demand with
-`npx astryx component Badge`, which returns a fixed shape every time —
-description, import path, anatomy, best practices as explicit Do/Don't pairs, a
-props table, theming, and related templates. A terse `AGENTS.md` sits above it
-and routes to the detail. That structure is what keeps the system usable when
-there are eighty components instead of one: the agent's context holds the index,
-not the encyclopedia.
+Meta's Astryx is the closest thing to what this assignment describes, and its
+retrieval model is the part worth copying. Component documentation is not pasted
+into a rules file. It is fetched when needed, with `npx astryx component Badge`,
+and it comes back in the same shape every time: description, import path,
+anatomy, best practices as Do/Don't pairs, a props table, theming, related
+templates. A short `AGENTS.md` sits above all that and points to it.
 
-The guidance itself is opinionated in a way that reads as written for a machine
-that will otherwise do the mediocre thing. The strongest rule in Astryx's Badge
-doc is not about the API at all — it says not to put a green "Active" badge on
-every healthy row, because if every row is badged then none of them stand out.
-That is a judgement an LLM will not reach on its own from a props table, and it
-is the kind of rule this system needed to state too.
+That structure is what keeps a system usable at eighty components instead of one.
+The agent's context holds the index, not the encyclopedia.
 
-The most instructive thing, though, was a defect. Astryx's compressed
-`AGENTS.md` rule says "Badge = counts only," while the full component doc frames
-Badge as status-and-category and explicitly lists counts under *don't use badges
-for metadata*. The two disagree, because a human compressed the detailed doc into
-the terse one by hand and the copies then drifted. An agent reading the terse
-rule is confidently steered wrong.
+The guidance is also written for a reader that will otherwise do the mediocre
+thing. The strongest rule in Astryx's Badge doc is not about the API at all: it
+says don't put a green "Active" badge on every healthy row, because if every row
+is badged then none of them stand out. An agent will not work that out from a
+props table, and it is the kind of rule this system needed too.
 
-Everything about how this repo is wired follows from that observation: **the
-compressed layer must be generated from the same source as the detailed layer,
-or it will eventually lie.**
+The most useful thing I found, though, was a bug. Astryx's short `AGENTS.md` rule
+says "Badge = counts only". Its full component doc says Badge is for status and
+category, and specifically lists counts under *don't*. The two contradict each
+other, because a person summarised the long doc by hand and the two copies then
+drifted apart. An agent reading the short version is confidently sent the wrong
+way.
+
+Everything about how this repo is wired follows from that: **if a short version
+of a fact is written by hand, it will eventually be wrong. Generate it from the
+same source as the long version.**
 
 ## How it fits together
 
 ```
 src/Design System/
-  variables.figma.json        Figma variables export: Brand, Alias, DLV_Mapped
-  typography.figma.json       Figma text styles, fetched separately (see below)
-  tokens.json                 GENERATED, DTCG, the semantic layer and type
-  tokens.css                  GENERATED, what components consume, light and dark
-  tokens.primitives.json      GENERATED, DTCG, Brand and Alias
-  tokens.primitives.css       GENERATED, imported by tokens.css
+  variables.figma.json        exported from Figma: the colours, sizes, radii
+  typography.figma.json       exported from Figma: the text styles
+  tokens.json                 GENERATED, the tokens components are allowed to use
+  tokens.css                  GENERATED, the same as CSS variables, light and dark
+  tokens.primitives.json      GENERATED, the raw values underneath
+  tokens.primitives.css       GENERATED, loaded by tokens.css
   Badge/
-    badge.meta.ts             source of truth for the public API
-    badge.figma.json          the component set's own bindings, from Figma
-    badge.spec.json           GENERATED, platform-neutral contract
+    badge.meta.ts             the one place the public API is defined
+    badge.figma.json          what the Figma component actually uses, per variant
+    badge.spec.json           GENERATED, the badge described without React
     Badge.tsx / .types.ts / .css
-    Badge.test.tsx            semantics: element, roles, aria, order
-    badge.meta.test.ts        the metadata still describes the implementation
-    badge.spec.test.ts        the React build conforms to the spec
+    Badge.test.tsx            the markup: element, roles, aria, order
+    badge.meta.test.ts        the docs still match the code
+    badge.spec.test.ts        the React badge matches the description
   tokens.test.ts              tokens are generated, and only tokens are used
 
 .cursor/skills/delhivery-design-system/
   SKILL.md                    the index: rules, component list, how to choose
-  components/badge.md         the full doc; API tables are GENERATED
-  tokens.md                   GENERATED token reference
+  components/badge.md         the full doc; the tables are GENERATED
+  tokens.md                   GENERATED list of every token
 
-AGENTS.md                     always-in-context rules, no duplicated API facts
-scripts/                      the generators and the retrieval CLI
-eval/                         the prompt, the agent's output, and the result
+AGENTS.md                     the always-loaded rules, with no API facts copied in
+scripts/                      the generators, and the command that prints a doc
+eval/                         the prompt, what an agent built, and how it scored
 ```
 
-Two sources of truth, four consumers:
+Nothing here is written twice by hand. Two files are the source, and everything
+else is built from them:
 
-| Source | Consumers |
+| This is edited | Everything built from it |
 |---|---|
-| `variables.figma.json` + `typography.figma.json` | `tokens.json` and `tokens.primitives.json`, then the two stylesheets, `tokens.md` and the token tests |
-| `badge.meta.ts` + `badge.figma.json` | `badge.spec.json`, the props table in `components/badge.md`, the playground's Properties table, the drift tests |
+| the two `*.figma.json` exports | the four token files, the token reference doc, and the token tests |
+| `badge.meta.ts` plus `badge.figma.json` | `badge.spec.json`, the props table in the docs, the props table in the playground, and the tests that catch drift |
 
-Design values come straight out of Figma. `variables.figma.json` is the variables
-export, three collections deep: Brand holds the primitives, Alias names them,
-and DLV_Mapped is the layer components consume, carrying the light and dark
-modes. That chain survives into CSS as nested `var()` references, so editing one
-primitive cascades exactly as it does in Figma, and dark mode is a property of
-the semantic tier rather than a second stylesheet.
+### Where the design values come from
 
-The suffix marks which side of the pipeline a file is on: `*.figma.json` is
-fetched and never hand-edited, `tokens.*` is generated. Text styles are not
-variables in Figma and are absent from the export, so `typography.figma.json` is
-fetched from the REST API by `scripts/fetch-typography.mjs` and committed, which
-keeps the build offline.
+All of them come from Figma, and none are retyped here. `variables.figma.json` is
+Figma's own export, and it has three layers:
 
-The output is split where the audience changes. Brand and Alias are 581 of the
-1,179 custom properties and no component may name any of them, so they are
-generated into `tokens.primitives.*`, leaving `tokens.css` as the 598 tokens
-somebody might legitimately reach for. That is a readability split, not a payload
-one: 477 of the 478 semantic colour tokens are a `var()` into a primitive, so the
-two files are a set, and `tokens.css` imports its primitives rather than trusting
-a caller to load half a chain. Flattening the semantic layer to literals would
-make it standalone and cost the cascade, which is the wrong trade.
+1. **Brand** — the raw values. `#2396fb`, `4px`.
+2. **Alias** — names for those raw values, like `neutral/white-300`.
+3. **Mapped** — names for what a value is *for*: `surface/bg_blue/default`,
+   `text/heading/primary`, `border/success/base`. This is the layer a component
+   is allowed to use. In this repo it is called the **semantic** layer.
 
-Nothing else feeds the tokens. An earlier hand-authored set survived the
-migration for a while so components kept rendering mid-remap, and it is now
-gone: the Badge, the documentation site's own chrome and the page defaults all
-read the semantic tier. Because the token tests fail on a `var()` that resolves to
-nothing, deleting those names was enough to prove no stylesheet still wanted
-them.
+Those three layers point at each other in Figma, and they still point at each
+other in the CSS. `--ds-surface-bg_blue-default` doesn't hold a colour. It holds
+"whatever `--ds-alias-information-info-500` is", which holds "whatever
+`--ds-brand-blue-500` is", which is finally `#2396fb`. Change that one blue at the
+bottom and everything above it moves with it, exactly as in Figma.
 
-## The component spec
+Light and dark live on the semantic layer too, so a component that uses it gets
+dark mode without writing a single dark-mode rule. One that reaches past it to a
+raw value does not — which is the practical reason for the rule, and a test
+enforces it.
 
-`badge.spec.json` is a platform-neutral contract: the API, the anatomy, the
-geometry per size, all 45 variant-and-type colour pairings, the accessibility
-semantics, and a list of conformance statements. It holds decisions as data and
-semantics as declarations, never layout as code — token names rather than
-values, logical directions rather than left and right, and `slot` rather than
-`ReactNode` — so the same file can drive a Vue, SwiftUI or Compose
-implementation. Only the tokens and this contract are portable; each rendering
-model still writes its own implementation.
+A `*.figma.json` name means the file came out of Figma and is never edited by
+hand. A `tokens.*` name means a script wrote it. Figma keeps text styles separate
+from variables and leaves them out of the export, so `typography.figma.json` is
+pulled from Figma's API by `scripts/fetch-typography.mjs` and committed. After
+that the build needs no network.
 
-What makes it more than documentation is where it comes from. The colour
-pairings are read out of the Figma component set's own variable bindings by
-`scripts/fetch-badge-figma.mjs`, so the spec is generated from the design rather
-than from this repo's code. `badge.spec.test.ts` then checks the React
-implementation against it, which means a designer rebinding a colour in Figma
-fails CI here rather than being noticed months later. Any other implementation
-would be validated by the equivalent of that one test file.
+### Why there are four token files instead of two
 
-Because the playground's interactive props table and the published props table
-are built from the same file, the documentation site cannot describe a prop the
-docs don't have — and neither can describe a prop the component doesn't have,
-because `badge.meta.test.ts` reads `Badge.types.ts` and compares.
+There are 1,179 CSS variables in total, and 581 of them are the raw values and
+their names — the two layers no component may use. Those go into
+`tokens.primitives.*`, which leaves `tokens.css` holding the 598 tokens somebody
+might actually want. Opening the file you're allowed to use no longer means
+scrolling past the ones you aren't.
 
-`npm run docs:build` fills the marked blocks in the markdown and leaves the prose
-alone. `npm run docs:check` fails if anything is stale, so the drift that broke
-Astryx's docs is a build error here rather than a bad suggestion months later.
+This is about readability, not download size. 477 of the 478 semantic colours are
+just a pointer at a raw value, so the two files only work together, and
+`tokens.css` loads the primitives itself rather than leaving that to whoever
+imports it. The bundled CSS is byte-for-byte the size it was before the split.
 
-## How an agent gets the docs
+We could instead have copied the real colour into each semantic token and made
+`tokens.css` standalone. That would cost the thing that makes this worth doing —
+changing one blue in Figma changing everything that uses it — so it isn't worth
+the trade.
 
-Three routes to the same markdown, because the docs should not depend on which
-tool the developer happens to use:
+There used to be a third set of hand-written tokens, kept alive so components
+kept rendering while they were moved over. It's gone. The Badge, the
+documentation site's own styling, and the page defaults all read the semantic
+layer now. The tests fail on a token name that doesn't resolve, so deleting the
+old names was itself the proof that nothing still wanted them.
+
+## Describing the badge without React
+
+`badge.spec.json` is the badge written down in a way that mentions no framework:
+what you can pass in, what's inside it, how big each size is, the colour every one
+of the 45 variant-and-type combinations uses, what a screen reader should get, and
+a list of checks that decide whether an implementation counts as correct.
+
+It describes decisions rather than code. It names a token instead of a colour,
+says `paddingInline` rather than left-and-right, and says `slot` instead of
+`ReactNode`. Nothing in it assumes the thing being built is a web page, which is
+what lets the Vue, SwiftUI or Compose version be generated from it.
+
+What makes it more than a document is where it comes from. Which colour each
+variant uses is read straight out of the Figma component by
+`scripts/fetch-badge-figma.mjs`. It follows the design, not this repo's code. And
+`badge.spec.test.ts` checks the React badge against it, so a designer rebinding a
+colour in Figma breaks a build here instead of being noticed months later.
+
+### Shipping the same badge on other platforms
+
+This is the point of the file. `badge.spec.json` is data, not prose, so it is
+something you point a generator or a coding agent at. The Vue, SwiftUI and Compose
+versions of this badge get produced from it, instead of five teams reading the
+documentation and rebuilding the badge by hand five times.
+
+That distinction is the same one this whole repo is about. Hand-copying a fact
+into a second place is how the copies end up disagreeing — it happened to
+Astryx's docs, and it is exactly how five platform implementations quietly stop
+being the same component. One machine-readable source, five generated outputs, is
+the version that holds.
+
+Two files travel: this one, and the tokens it points at. The React code doesn't.
+Neither does `badge.figma.json`, which is the raw Figma data the description is
+generated *from*.
+
+**The tokens.** The token files use DTCG, a standard format most token tools
+already read, so producing Swift constants or Kotlin values from them is a solved
+problem. Two things a generator has to handle: a semantic token usually points at
+another token rather than holding a value, so both files have to be resolved
+together; and a token can carry a second value for dark mode, under
+`$extensions["com.delhivery.mode"].dark`.
+
+**The component.** Every part of the spec maps to something a generator emits, and
+none of it is CSS:
+
+| This part | Becomes |
+|---|---|
+| `api` | the parameter list. Each input has a plain kind — `text`, `enum`, `flag`, `slot` — so `leadingIcon` maps to whatever the target calls "somewhere for the caller to put an icon": a `@ViewBuilder` closure, a `@Composable` lambda, a named slot |
+| `anatomy.parts` | the children, in order, and which are conditional. `when` names the input that turns a part on. `decorative: true` means it must be hidden from screen readers |
+| `layout.bySize` | height, padding, gap, corner radius, icon size and dot size, per size |
+| `appearance.byVariant` | the background, text and border colour for every variant and type. `match-background` means the border takes the background colour; `transparent`, `none` and `inherit` mean what they say |
+| `behaviour` | the bits that aren't styling, like `ghost` showing no label |
+| `accessibility` | where the accessible name comes from, what to hide, and when to report the badge as disabled |
+| `constraints` | the props to refuse to generate, each with its reason. So "why is there no `onClick`?" has an answer written down |
+
+**The checks.** The seven lines under `conformance` are written to be assertable
+rather than aspirational — "the rendered height equals the height for that size"
+is as easy to test in XCTest or Espresso as it is here. Generated code still needs
+proving, and that list is what proves it: it is the definition of "the same
+badge", and it applies equally to output nobody hand-wrote. `badge.spec.test.ts`
+is the React version and reads as the worked example.
+
+Some things deliberately don't travel. The loading shimmer's timing curve stays in
+`Badge.css`, because Figma has no motion values and every platform animates
+differently. A description that tried to carry it would be describing CSS instead
+of the component.
+
+And because generation runs from a file rather than from memory, keeping every
+platform current is a command:
+
+```
+npm run spec:fetch    # re-read the Figma component
+npm run spec:build    # rewrite badge.spec.json
+npm run spec:check    # fail if the two disagree — this runs in CI
+```
+
+A designer rebinding one colour in Figma produces a diff in `badge.spec.json`, and
+every platform generated from it picks the change up on its next run.
+
+## Why the docs can't go stale
+
+The playground's props table and the published props table are built from the
+same file, so the site can't describe a prop the docs don't have. Neither can
+describe a prop the component doesn't have, because `badge.meta.test.ts` reads
+`Badge.types.ts` and compares the two.
+
+`npm run docs:build` fills in the marked blocks in the markdown and leaves the
+hand-written prose alone. `npm run docs:check` fails if any block is out of date.
+The contradiction that broke Astryx's docs is a build error here.
+
+## How an agent finds the docs
+
+Three routes to the same markdown, because it shouldn't matter which tool the
+developer happens to use:
 
 1. **The skill.** In Cursor, `.cursor/skills/delhivery-design-system/SKILL.md`
-   loads on its own when a task touches UI, and points to the component doc.
-2. **`AGENTS.md`.** Always in context, for any agent that reads it. It holds only
-   what is true of every task, plus the component index and the retrieval command.
-3. **The CLI.** `npm run ds:component -- badge` prints the doc to stdout, for
-   agents, editors and CI jobs with no notion of skills.
+   loads by itself when a task touches UI, and points to the component doc.
+2. **`AGENTS.md`.** Always loaded, for any agent that reads it. It holds only what
+   is true of every task, plus the component list and the command below.
+3. **The command.** `npm run ds:component -- badge` prints the doc, for agents,
+   editors and CI jobs that know nothing about skills.
 
-## Verification
+## What gets checked
 
-`npm run verify` runs every check below, and is what the skill tells an agent to
+`npm run verify` runs everything below, and is what the skill tells an agent to
 run before finishing. CI runs the same checks as separate steps, so a failure
-names itself.
+says what it is.
 
 | Check | Catches |
 |---|---|
 | `lint` | the usual |
-| `tokens:check` | a generated token file hand-edited, or a Figma export refreshed without regenerating |
-| `spec:check` | `badge.spec.json` stale against `badge.meta.ts` or the Figma bindings |
-| `docs:check` | docs stale against `badge.meta.ts` or `tokens.json` |
-| `test` | 85 tests: badge semantics, geometry, token discipline, metadata drift, spec conformance |
+| `tokens:check` | a generated token file edited by hand, or a Figma export refreshed without rebuilding |
+| `spec:check` | `badge.spec.json` out of date with the API or with Figma |
+| `docs:check` | docs out of date with the API or the tokens |
+| `test` | 85 tests: markup, sizes, token discipline, docs matching code, and the badge matching its description |
 | `build` | typecheck and bundle |
-| `eval:check` | the agent-generated screen still compiles against the real types |
+| `eval:check` | the screen an agent wrote still compiles against the real types |
 
-Some of these started as things I checked by hand in a browser and then turned
-into tests. jsdom has no layout engine and does not resolve `var()`, so the
-geometry contract — 20/24/28px heights, 4px radius, 2px gap, icons at `1em`, a
-6px green dot — is asserted against the stylesheet source rather than a rendered
-element, which is honest about what is being proven. I verified the tests fail
-when the metadata lies by mutating a documented height and watching the suite go
-red.
+Some of these started as things I checked by hand in the browser. The test
+environment has no layout engine and doesn't resolve CSS variables, so the size
+rules — 20/24/28px tall, 4px corners, 2px gap, and so on — are checked against
+the stylesheet rather than a rendered element. That is less impressive than it
+sounds and I'd rather say so than imply otherwise. To confirm the tests actually
+bite, I changed a documented height to a wrong value and watched the suite fail.
 
 The last row is the interesting one. `eval:check` typechecks the screen an agent
-wrote from the docs against the real component types, so a breaking API change
-shows up as a failing eval.
+wrote from the docs against the real component types, so breaking the API breaks
+the eval.
 
-## The eval
+## Can an agent actually use it?
 
-See [eval/README.md](eval/README.md) for the protocol, the prompt, the output and
-the grade.
+See [eval/README.md](eval/README.md) for the prompt, the rules, the output and the
+score.
 
-The short version: a fresh agent that was allowed to read the skill docs and
-nothing else — no component source, no types, no CSS — was asked to build a
-shipment tracking list with statuses, priority markers, a presence indicator and
-a loading state. The output is committed as `eval/run-1/`, and it is graded
-mechanically by typechecking against the real types, plus a read of whether it
-followed the judgement rules the docs put most weight on.
+The short version: a fresh agent was allowed to read the docs and nothing else —
+no component source, no types, no CSS — and asked to build a shipment tracking
+list with statuses, priority markers, a presence indicator and a loading state.
+What it produced is committed as `eval/run-1/`, graded by typechecking against the
+real types and by reading whether it followed the judgement calls the docs push
+hardest. It scored ten of eleven, and the one failure turned out to be a
+contradiction in my own docs, which the agent had spotted and said so.
 
-## Component summary
+## The component itself
 
-`Badge` is a compact, non-interactive marker for the status, category or count of
-the thing beside it: nine variants, four types, three sizes, an optional presence
-dot and optional icons. It renders a `<span>`, takes no click handler and is not
-focusable — badges never carry their own action. Full documentation:
+`Badge` is a small, non-interactive marker for the status, category or count of
+the thing next to it: nine variants, five types, three sizes, an optional
+presence dot and optional icons. It renders a `<span>`, takes no click handler and
+can't be focused, because a badge never carries its own action. Full
+documentation:
 [`.cursor/skills/delhivery-design-system/components/badge.md`](.cursor/skills/delhivery-design-system/components/badge.md).

@@ -40,6 +40,9 @@ const PRACTICES: { kind: 'do' | 'dont'; text: string }[] = [
   { kind: 'dont', text: 'Don’t use badges as primary action buttons.' },
 ]
 
+/** Refreshing the spec from Figma, for the "Not just React" section. */
+const SPEC_COMMAND = 'npm run spec:fetch && npm run spec:build'
+
 const TYPES_CODE = `<Badge variant="success" type="solid" label="Solid" />
 <Badge variant="success" type="subtle" label="Subtle" />
 <Badge variant="success" type="outlined" label="Outlined" />
@@ -189,6 +192,46 @@ export function OverviewTab() {
             label="Both"
           />
         </ExampleCard>
+      </section>
+
+      <section className="section">
+        <h2 className="section__title">Not just React</h2>
+        <p className="section__subtitle">
+          For whoever builds the design system, rather than whoever uses it.
+          Everything above is what you need to put a badge on a page.
+        </p>
+        <p className="section__body">
+          The badge is written in React here, but the React code is not the
+          thing being described. A file called <code>badge.spec.json</code>{' '}
+          describes the same badge without mentioning any framework: what you
+          can pass in, what sits inside it, how big each size is, and which
+          colour every variant and type uses. The Properties tab shows the part
+          of that file matching whatever you have selected there.
+        </p>
+        <p className="section__body">
+          Because it is data rather than prose, it is something you point a
+          generator or a coding agent at: the Vue, SwiftUI or Compose version of
+          this badge gets produced from the same file, rather than a team reading
+          this page and rebuilding the badge by hand. Hand-copying is what makes
+          five platforms drift apart. The file also ends with seven plain checks
+          — the height matches the size, the label is what a screen reader
+          announces, and so on — so each generated version can be held to the
+          same standard.
+        </p>
+        <p className="section__body">
+          The file is written by a script that reads the Figma component
+          directly, so it follows the design rather than following this code. If
+          a designer changes a colour in Figma, running this brings the
+          description back in line, and everyone building from it sees what
+          changed.
+        </p>
+        <CodeBlock inline code={SPEC_COMMAND} />
+        <p className="section__body">
+          A finished design system would keep all of this out of the component
+          page and in its own contributor documentation. It sits here because one
+          component is the whole of this demo, and the mechanism is the more
+          interesting half of it.
+        </p>
       </section>
     </>
   )

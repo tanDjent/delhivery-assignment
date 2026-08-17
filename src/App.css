@@ -129,6 +129,15 @@
   margin-top: 24px;
 }
 
+/* Inline code in prose. The block form is .code, which is a different thing. */
+.section__body code {
+  padding: 1px 5px;
+  border-radius: var(--ds-radius-small);
+  background: var(--ds-surface-bg_primary-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
 /* ------------------------------------------------------------ Code block --- */
 
 /* The code block stays dark in either theme, the way a syntax surface does, so
