@@ -23,7 +23,7 @@ interface PlaygroundState {
 
 const INITIAL: PlaygroundState = {
   label: 'Badge',
-  variant: 'info',
+  variant: 'black',
   type: 'solid',
   size: 'medium',
   statusDot: false,
