@@ -54,7 +54,9 @@ const api = Object.fromEntries(
 )
 
 /** Token references are resolved against tokens.json so the spec cannot name
- *  something the token pipeline does not publish. */
+ *  something the token pipeline does not publish. Deliberately not merged with
+ *  tokens.primitives.json: a spec that reached past the semantic layer for a raw
+ *  primitive should fail here rather than be copied onto another platform. */
 const resolves = (reference) =>
   reference
     .slice(1, -1)

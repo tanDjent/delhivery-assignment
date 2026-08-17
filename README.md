@@ -52,10 +52,12 @@ or it will eventually lie.**
 
 ```
 src/Design System/
-  variables.json              Figma variables export: Brand, Alias, DLV_Mapped
-  typography.json             Figma text styles, fetched separately (see below)
-  tokens.json                 GENERATED, DTCG format
-  tokens.css                  GENERATED, three tiers plus light and dark
+  variables.figma.json        Figma variables export: Brand, Alias, DLV_Mapped
+  typography.figma.json       Figma text styles, fetched separately (see below)
+  tokens.json                 GENERATED, DTCG, the semantic layer and type
+  tokens.css                  GENERATED, what components consume, light and dark
+  tokens.primitives.json      GENERATED, DTCG, Brand and Alias
+  tokens.primitives.css       GENERATED, imported by tokens.css
   Badge/
     badge.meta.ts             source of truth for the public API
     badge.figma.json          the component set's own bindings, from Figma
@@ -80,24 +82,35 @@ Two sources of truth, four consumers:
 
 | Source | Consumers |
 |---|---|
-| `variables.json` + `typography.json` | `tokens.json`, then `tokens.css`, `tokens.md` and the token tests |
+| `variables.figma.json` + `typography.figma.json` | `tokens.json` and `tokens.primitives.json`, then the two stylesheets, `tokens.md` and the token tests |
 | `badge.meta.ts` + `badge.figma.json` | `badge.spec.json`, the props table in `components/badge.md`, the playground's Properties table, the drift tests |
 
-Design values come straight out of Figma. `variables.json` is the variables
+Design values come straight out of Figma. `variables.figma.json` is the variables
 export, three collections deep: Brand holds the primitives, Alias names them,
 and DLV_Mapped is the layer components consume, carrying the light and dark
 modes. That chain survives into CSS as nested `var()` references, so editing one
 primitive cascades exactly as it does in Figma, and dark mode is a property of
-the mapped tier rather than a second stylesheet.
+the semantic tier rather than a second stylesheet.
 
-Text styles are not variables in Figma and are absent from that export, so
-`typography.json` is fetched from the REST API by
-`scripts/fetch-typography.mjs` and committed, which keeps the build offline.
+The suffix marks which side of the pipeline a file is on: `*.figma.json` is
+fetched and never hand-edited, `tokens.*` is generated. Text styles are not
+variables in Figma and are absent from the export, so `typography.figma.json` is
+fetched from the REST API by `scripts/fetch-typography.mjs` and committed, which
+keeps the build offline.
+
+The output is split where the audience changes. Brand and Alias are 581 of the
+1,179 custom properties and no component may name any of them, so they are
+generated into `tokens.primitives.*`, leaving `tokens.css` as the 598 tokens
+somebody might legitimately reach for. That is a readability split, not a payload
+one: 477 of the 478 semantic colour tokens are a `var()` into a primitive, so the
+two files are a set, and `tokens.css` imports its primitives rather than trusting
+a caller to load half a chain. Flattening the semantic layer to literals would
+make it standalone and cost the cascade, which is the wrong trade.
 
 Nothing else feeds the tokens. An earlier hand-authored set survived the
 migration for a while so components kept rendering mid-remap, and it is now
 gone: the Badge, the documentation site's own chrome and the page defaults all
-read the mapped tier. Because the token tests fail on a `var()` that resolves to
+read the semantic tier. Because the token tests fail on a `var()` that resolves to
 nothing, deleting those names was enough to prove no stylesheet still wanted
 them.
 
@@ -150,10 +163,10 @@ names itself.
 | Check | Catches |
 |---|---|
 | `lint` | the usual |
-| `tokens:check` | `tokens.json` or `tokens.css` hand-edited, or a Figma export refreshed without regenerating |
+| `tokens:check` | a generated token file hand-edited, or a Figma export refreshed without regenerating |
 | `spec:check` | `badge.spec.json` stale against `badge.meta.ts` or the Figma bindings |
 | `docs:check` | docs stale against `badge.meta.ts` or `tokens.json` |
-| `test` | 77 tests: badge semantics, geometry, token discipline, metadata drift, spec conformance |
+| `test` | 85 tests: badge semantics, geometry, token discipline, metadata drift, spec conformance |
 | `build` | typecheck and bundle |
 | `eval:check` | the agent-generated screen still compiles against the real types |
 

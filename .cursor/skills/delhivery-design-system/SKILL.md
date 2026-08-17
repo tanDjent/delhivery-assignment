@@ -24,14 +24,16 @@ npm run ds:component -- badge
 
 ## Non-negotiables
 
-1. **No colour value outside the tokens**, and no raw dimension either. Reach
-   for the mapped tier — `var(--ds-surface-*)`, `var(--ds-text-*)`,
+1. **No colour value outside the tokens**, and no raw dimension either. Name a
+   token from the semantic layer — `var(--ds-surface-*)`, `var(--ds-text-*)`,
    `var(--ds-border-*)`, `var(--ds-spacing-*)`, `var(--ds-radius-*)` — which is
-   the only tier that carries dark mode. See [tokens.md](tokens.md). Enforced by
-   tests.
-2. **`tokens.json` and `tokens.css` are both generated** from the Figma exports
-   `variables.json` and `typography.json`. Run `npm run tokens:build`. Never
-   hand-edit either output; a token that is wrong is wrong in Figma.
+   the only tier that carries dark mode, and the only one a component may use. The
+   `--ds-brand-*` and `--ds-alias-*` primitives are split into
+   `tokens.primitives.css` for exactly that reason. See [tokens.md](tokens.md).
+   Enforced by tests.
+2. **Every `tokens.*` file is generated** from the Figma exports
+   `variables.figma.json` and `typography.figma.json`. Run `npm run tokens:build`.
+   Never hand-edit an output; a token that is wrong is wrong in Figma.
 3. **Values used by one component belong to that component.** Badge's icon and
    dot sizes live in `Badge.css` as `--badge-icon-size` and `--badge-dot-size`,
    not in the shared tokens.

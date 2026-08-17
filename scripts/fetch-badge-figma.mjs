@@ -39,7 +39,7 @@ const { nodes } = await response.json()
 // Variable ids resolve against the same export the tokens are built from, so a
 // binding Figma cannot resolve here is one the token pipeline does not have.
 const variables = JSON.parse(
-  await readFile(join(root, 'src/Design System/variables.json'), 'utf8'),
+  await readFile(join(root, 'src/Design System/variables.figma.json'), 'utf8'),
 )
 const pathById = new Map()
 for (const collection of variables.collections) {
@@ -61,7 +61,7 @@ for (const collection of variables.collections) {
 
 const tokenRef = (id) => {
   const path = pathById.get(id)
-  if (!path) throw new Error(`Binding ${id} is not in variables.json`)
+  if (!path) throw new Error(`Binding ${id} is not in variables.figma.json`)
   return `{${path}}`
 }
 

@@ -2,16 +2,25 @@
 /**
  * Builds the token artifacts from the Figma exports.
  *
- *   variables.json + typography.json  ->  tokens.json (DTCG)  ->  tokens.css
+ *   variables.figma.json     tokens.primitives.json   tokens.primitives.css
+ *                        ->                        ->
+ *   typography.figma.json    tokens.json              tokens.css
  *
- * variables.json is Figma's variables export: three collections, where Brand
- * holds primitives, Alias points at Brand, and DLV_Mapped points at Alias and
- * carries the Light and Dark modes. That chain is preserved all the way into
+ * variables.figma.json is Figma's variables export: three collections, where
+ * Brand holds primitives, Alias points at Brand, and DLV_Mapped points at Alias
+ * and carries the Light and Dark modes. That chain is preserved all the way into
  * CSS as nested var() references, so changing one primitive cascades exactly as
  * it does in Figma.
  *
- * typography.json is separate because Figma text styles are not variables and
- * never appear in a variables export.
+ * The output is split where the audience changes. Brand and Alias go to the
+ * primitives files, which exist so the chain resolves and are read by almost
+ * nobody; the semantic layer and the text styles go to tokens.json and
+ * tokens.css, which is what components consume. Because nearly every semantic
+ * token is a reference, the two are a set: tokens.css imports the primitives so
+ * a caller cannot load half the chain.
+ *
+ * typography.figma.json is separate because Figma text styles are not variables
+ * and never appear in a variables export.
  *
  * Run with --check in CI to fail when a generated file has drifted.
  */
@@ -22,10 +31,12 @@ import { dirname, join } from 'node:path'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const DS = join(root, 'src/Design System')
 
-const VARIABLES = join(DS, 'variables.json')
-const TYPOGRAPHY = join(DS, 'typography.json')
+const VARIABLES = join(DS, 'variables.figma.json')
+const TYPOGRAPHY = join(DS, 'typography.figma.json')
 const TOKENS_JSON = join(DS, 'tokens.json')
 const TOKENS_CSS = join(DS, 'tokens.css')
+const PRIMITIVES_JSON = join(DS, 'tokens.primitives.json')
+const PRIMITIVES_CSS = join(DS, 'tokens.primitives.css')
 
 /** Appended to every font family, since Figma only stores the family name. */
 const FONT_FALLBACK =
@@ -80,7 +91,9 @@ const ALIAS = collection('Alias')
 const MAPPED = collection('DLV_Mapped')
 
 if (!BRAND || !ALIAS || !MAPPED) {
-  throw new Error('variables.json is missing one of Brand, Alias, DLV_Mapped')
+  throw new Error(
+    'variables.figma.json is missing one of Brand, Alias, DLV_Mapped',
+  )
 }
 
 /** Which tier each variable belongs to, and its dotted DTCG path. */
@@ -101,9 +114,10 @@ const pathOf = (variable) => {
   return tier === 'mapped' ? segments : [tier, ...segments]
 }
 
-/** CSS custom property name. The mapped tier is unprefixed because it is the
- *  layer components consume; the other two are prefixed, which also resolves
- *  the 30 Alpha ramp names that Brand and Alias share. */
+/** CSS custom property name. The semantic tier — Figma calls the collection
+ *  DLV_Mapped — is unprefixed because it is the layer components consume; the
+ *  other two are prefixed, which also resolves the 30 Alpha ramp names that
+ *  Brand and Alias share. */
 const cssName = (variable) => `--ds-${pathOf(variable).join('-')}`
 
 const modeOf = (col, label) =>
@@ -161,7 +175,7 @@ const cssValue = (resolved, type) => {
   }
 }
 
-// -------------------------------------------------------------- tokens.json ---
+// ------------------------------------------------------------- the documents ---
 
 const setPath = (target, path, value) => {
   let node = target
@@ -172,15 +186,27 @@ const setPath = (target, path, value) => {
   node[path.at(-1)] = value
 }
 
+const SOURCE = {
+  variables: 'variables.figma.json',
+  typography: 'typography.figma.json',
+  regenerate: 'npm run tokens:build',
+}
+
+const primitives = {
+  $description:
+    'GENERATED FILE — DO NOT EDIT. The Brand and Alias tiers: raw values, and the names given to them. Split out of tokens.json because components never reference these directly — they exist so the semantic tokens have something to point at. Read tokens.json instead unless you are changing a primitive.',
+  $source: { ...SOURCE, consumedBy: 'tokens.json' },
+}
+
 const tokens = {
   $description:
-    'GENERATED FILE — DO NOT EDIT. Built from variables.json and typography.json by scripts/build-tokens.mjs. DTCG format, so the tokens are consumable outside CSS. Names mirror Figma: Surface/BG_Primary/Default becomes surface.bg_primary.default.',
-  $source: {
-    variables: 'variables.json',
-    typography: 'typography.json',
-    regenerate: 'npm run tokens:build',
-  },
+    'GENERATED FILE — DO NOT EDIT. The semantic layer, which is what components consume, plus the Figma text styles. DTCG format, so the tokens are consumable outside CSS. Names mirror Figma: Surface/BG_Primary/Default becomes surface.bg_primary.default. Almost every value here is a reference into tokens.primitives.json, so resolve the two together.',
+  $source: { ...SOURCE, primitives: 'tokens.primitives.json' },
 }
+
+/** Brand and Alias belong to the primitives document, everything else here. */
+const documentFor = (path) =>
+  path[0] === 'brand' || path[0] === 'alias' ? primitives : tokens
 
 const cssBlocks = { light: [], dark: [] }
 
@@ -210,7 +236,7 @@ for (const col of [BRAND, ALIAS, MAPPED]) {
       }
     }
 
-    setPath(tokens, path, entry)
+    setPath(documentFor(path), path, entry)
     cssBlocks.light.push(`  ${cssName(variable)}: ${cssValue(light, type)};`)
   }
 }
@@ -251,13 +277,13 @@ for (const variable of BRAND.variables) {
   const number = WEIGHT_NUMBERS[label]
   if (!number) continue
   weightCss.push(`  --ds-brand-font_weight_value-${label}: ${number};`)
-  setPath(tokens, ['brand', 'font_weight_value', label], {
+  setPath(primitives, ['brand', 'font_weight_value', label], {
     $type: 'number',
     $value: number,
   })
 }
 
-// --------------------------------------------------------------- tokens.css ---
+// ----------------------------------------------------------- the stylesheets ---
 
 const section = (title, lines) =>
   [`  /* ${'-'.repeat(Math.max(1, 70 - title.length))} ${title} -- */`, ...lines].join(
@@ -290,34 +316,53 @@ const mappedLines = cssBlocks.light.filter(
   (line) => !declares('--ds-brand-')(line) && !declares('--ds-alias-')(line),
 )
 
-const css = `/**
+const primitivesCss = `/**
  * GENERATED FILE — DO NOT EDIT.
  *
- * Source: variables.json (Figma variables), typography.json (Figma text styles).
+ * Source: variables.figma.json (Figma variables).
  * Regenerate: npm run tokens:build
  *
- * Three tiers, mirroring the Figma collections. Brand holds the primitives,
- * Alias names them, and the unprefixed tokens are the mapped layer that
- * components consume. The references between tiers are preserved as var(), so
- * editing one primitive cascades the way it does in Figma.
- *
- * Light is the default. Dark is applied by [data-theme="dark"], and by the OS
- * preference unless a theme has been chosen explicitly.
+ * The Brand and Alias tiers: the raw values, and the names given to them. No
+ * component should reference anything here — these exist so that the semantic
+ * tokens in tokens.css have something to point at, which is why editing one
+ * value cascades the way it does in Figma. tokens.css imports this file, so
+ * there is nothing to import yourself.
  */
 
 :root {
 ${section('Brand — primitives', grouped(brandLines))}
 
-${section('Alias — named primitives', grouped(aliasLines))}
+${section('Font weights as numbers', weightCss)}
 
-${section('Mapped — the layer components consume (Light)', grouped(mappedLines))}
+${section('Alias — named primitives', grouped(aliasLines))}
+}
+`
+
+const css = `/**
+ * GENERATED FILE — DO NOT EDIT.
+ *
+ * Source: variables.figma.json (Figma variables), typography.figma.json (Figma
+ * text styles).
+ * Regenerate: npm run tokens:build
+ *
+ * The semantic layer — the only tokens a component should name — and the text
+ * styles. Almost every value below is a var() into the Brand and Alias tiers,
+ * so this file imports tokens.primitives.css rather than leaving a caller to
+ * load half a chain.
+ *
+ * Light is the default. Dark is applied by [data-theme="dark"], and by the OS
+ * preference unless a theme has been chosen explicitly.
+ */
+
+@import './tokens.primitives.css';
+
+:root {
+${section('Semantic — the layer components consume (Light)', grouped(mappedLines))}
 
 ${section('Typography — Figma text styles', typographyCss)}
-
-${section('Font weights as numbers', weightCss)}
 }
 
-/* Dark mode overrides only the mapped tokens whose value differs. */
+/* Dark mode overrides only the semantic tokens whose value differs. */
 [data-theme='dark'] {
 ${cssBlocks.dark.join('\n')}
 }
@@ -329,12 +374,20 @@ ${cssBlocks.dark.map((line) => `  ${line}`).join('\n')}
 }
 `
 
-const json = `${JSON.stringify(tokens, null, 2)}\n`
-
 // ------------------------------------------------------------------ write ---
 
 const targets = [
-  { path: TOKENS_JSON, content: json, label: 'tokens.json' },
+  {
+    path: PRIMITIVES_JSON,
+    content: `${JSON.stringify(primitives, null, 2)}\n`,
+    label: 'tokens.primitives.json',
+  },
+  {
+    path: TOKENS_JSON,
+    content: `${JSON.stringify(tokens, null, 2)}\n`,
+    label: 'tokens.json',
+  },
+  { path: PRIMITIVES_CSS, content: primitivesCss, label: 'tokens.primitives.css' },
   { path: TOKENS_CSS, content: css, label: 'tokens.css' },
 ]
 
@@ -354,8 +407,9 @@ for (const target of targets) {
 if (drifted) process.exit(1)
 if (CHECK) console.log('Token files are up to date.')
 else {
-  const count = cssBlocks.light.length + typographyCss.length + weightCss.length
+  const semantic = mappedLines.length + typographyCss.length
+  const primitive = brandLines.length + aliasLines.length + weightCss.length
   console.log(
-    `${count} custom properties (${cssBlocks.dark.length} dark overrides), ${Object.keys(typography.styles).length} text styles`,
+    `${semantic} semantic custom properties (${cssBlocks.dark.length} dark overrides) over ${primitive} primitives, ${Object.keys(typography.styles).length} text styles`,
   )
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Refreshes typography.json from Figma.
+ * Refreshes typography.figma.json from Figma.
  *
  * Text styles are not variables, so they never appear in a variables export.
  * They also aren't returned by /v1/files/:key/styles unless the library is
@@ -26,7 +26,7 @@ if (!token) {
 }
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const TARGET = join(root, 'src/Design System/typography.json')
+const TARGET = join(root, 'src/Design System/typography.figma.json')
 
 async function api(path) {
   const response = await fetch(`https://api.figma.com/v1/files/${FILE_KEY}${path}`, {
@@ -83,7 +83,7 @@ await writeFile(
   `${JSON.stringify(
     {
       $description:
-        'Figma text styles, extracted from the TDS file with the REST API. Text styles are not variables, so they are absent from variables.json and must be captured separately. Regenerate with: FIGMA_TOKEN=... node scripts/fetch-typography.mjs',
+        'Figma text styles, extracted from the TDS file with the REST API. Text styles are not variables, so they are absent from variables.figma.json and must be captured separately. Regenerate with: FIGMA_TOKEN=... node scripts/fetch-typography.mjs',
       figmaFileKey: FILE_KEY,
       extractedAt: new Date().toISOString().slice(0, 10),
       units: { fontSize: 'px', lineHeight: 'px', letterSpacing: 'px' },

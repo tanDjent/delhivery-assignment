@@ -13,9 +13,12 @@ const here = join(import.meta.dirname)
 const css = readFileSync(join(here, 'Badge.css'), 'utf8')
 const types = readFileSync(join(here, 'Badge.types.ts'), 'utf8')
 const component = readFileSync(join(here, 'Badge.tsx'), 'utf8')
-const tokens = JSON.parse(
-  readFileSync(join(here, '..', 'tokens.json'), 'utf8'),
-) as {
+/** The semantic tokens and the primitives they point at. The two documents share
+ *  no top-level key, so a shallow merge is enough to follow a reference. */
+const tokens = {
+  ...JSON.parse(readFileSync(join(here, '..', 'tokens.primitives.json'), 'utf8')),
+  ...JSON.parse(readFileSync(join(here, '..', 'tokens.json'), 'utf8')),
+} as {
   spacing: Record<string, { $value: string }>
   radius: Record<string, { $value: string }>
   typography: Record<
@@ -180,13 +183,13 @@ describe('every variant is fully wired', () => {
   ]
 
   for (const variant of BADGE_VARIANTS) {
-    it(`${variant} fills every slot from the mapped tier`, () => {
+    it(`${variant} fills every slot from the semantic layer`, () => {
       const rule = ruleFor(`.ds-badge--${variant}`)
       for (const slot of SLOTS) {
         const declaration = new RegExp(`--badge-${slot}:\\s*var\\((--ds-[\\w-]+)\\)`)
         const match = rule.match(declaration)
         expect(match, `${variant} is missing --badge-${slot}`).toBeTruthy()
-        // Reaching past the mapped tier would lose dark mode.
+        // Reaching past the semantic layer would lose dark mode.
         expect(match![1]).toMatch(/^--ds-(surface|text|border|icon)-/)
       }
     })

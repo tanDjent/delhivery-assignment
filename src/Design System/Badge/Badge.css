@@ -1,13 +1,13 @@
 /**
  * Badge styles.
  *
- * Every colour comes from the mapped tier, and the pairing of variant to token
+ * Every colour comes from the semantic layer, and the pairing of variant to token
  * is taken from the Figma component's own variable bindings rather than chosen
  * here. Each variant declares the local custom properties below; the type
  * modifiers decide which become background, text and border, so adding a colour
  * never requires a new type rule.
  *
- * Because the mapped tier carries the light and dark modes, the badge themes
+ * Because the semantic layer carries the light and dark modes, the badge themes
  * itself with no dark-mode rules of its own.
  */
 

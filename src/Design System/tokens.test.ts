@@ -4,14 +4,16 @@ import { describe, expect, it } from 'vitest'
 
 const SRC = join(import.meta.dirname, '..')
 const TOKENS_CSS = join(import.meta.dirname, 'tokens.css')
-const TOKENS_JSON = join(import.meta.dirname, 'tokens.json')
+const PRIMITIVES_CSS = join(import.meta.dirname, 'tokens.primitives.css')
 
 const tokensCss = readFileSync(TOKENS_CSS, 'utf8')
-const json = JSON.parse(readFileSync(TOKENS_JSON, 'utf8'))
+const primitivesCss = readFileSync(PRIMITIVES_CSS, 'utf8')
 
-const DARK_AT = tokensCss.indexOf("[data-theme='dark']")
-const lightBlock = tokensCss.slice(tokensCss.indexOf(':root {'), DARK_AT)
-const darkBlock = tokensCss.slice(DARK_AT)
+const read = (name: string) =>
+  JSON.parse(readFileSync(join(import.meta.dirname, name), 'utf8'))
+
+const primitivesJson = read('tokens.primitives.json')
+const json = read('tokens.json')
 
 const declarations = (block: string) =>
   [...block.matchAll(/^\s+(--ds-[\w-]+):\s*(.+);$/gm)].map((match) => ({
@@ -19,7 +21,15 @@ const declarations = (block: string) =>
     value: match[2],
   }))
 
-const light = declarations(lightBlock)
+const DARK_AT = tokensCss.indexOf("[data-theme='dark']")
+const darkBlock = tokensCss.slice(DARK_AT)
+
+const semantic = declarations(tokensCss.slice(tokensCss.indexOf(':root {'), DARK_AT))
+const primitive = declarations(primitivesCss)
+
+/** Both stylesheets, since tokens.css imports the primitives and the tiers only
+ *  resolve as a set. */
+const light = [...primitive, ...semantic]
 const declared = new Set(light.map((d) => d.name))
 
 /** The single var() a value consists of, or null if it is a literal. */
@@ -31,7 +41,7 @@ const tierOf = (name: string) =>
     ? 'brand'
     : name.startsWith('--ds-alias-')
       ? 'alias'
-      : 'mapped'
+      : 'semantic'
 
 function cssFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -53,13 +63,16 @@ function leaves(
     .flatMap(([key, child]) => leaves(child, [...path, key]))
 }
 
-describe('tokens.css is generated from the Figma exports', () => {
-  it('carries the generated-file warning', () => {
-    expect(tokensCss).toContain('GENERATED FILE — DO NOT EDIT')
-    expect(tokensCss).toContain('npm run tokens:build')
+describe('the stylesheets are generated from the Figma exports', () => {
+  it.each([
+    ['tokens.css', tokensCss],
+    ['tokens.primitives.css', primitivesCss],
+  ])('%s carries the generated-file warning', (_name, css) => {
+    expect(css).toContain('GENERATED FILE — DO NOT EDIT')
+    expect(css).toContain('npm run tokens:build')
   })
 
-  it('declares each token exactly once', () => {
+  it('declares each token exactly once across the two files', () => {
     const names = light.map((d) => d.name)
     const duplicated = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))]
     expect(duplicated).toEqual([])
@@ -67,14 +80,16 @@ describe('tokens.css is generated from the Figma exports', () => {
 
   it('leaves no var() pointing at a token that does not exist', () => {
     const used = new Set(
-      [...tokensCss.matchAll(/var\((--ds-[\w-]+)\)/g)].map((m) => m[1]),
+      [...(tokensCss + primitivesCss).matchAll(/var\((--ds-[\w-]+)\)/g)].map(
+        (m) => m[1],
+      ),
     )
     expect([...used].filter((name) => !declared.has(name))).toEqual([])
   })
 
-  it('emits every token in tokens.json', () => {
+  it('emits every token in both documents', () => {
     for (const group of ['brand', 'alias'] as const) {
-      for (const [path] of leaves(json[group])) {
+      for (const [path] of leaves(primitivesJson[group])) {
         expect(declared, `${group}.${path.join('.')}`).toContain(
           `--ds-${group}-${path.join('-')}`,
         )
@@ -83,6 +98,33 @@ describe('tokens.css is generated from the Figma exports', () => {
     for (const [path] of leaves(json.typography)) {
       expect(declared).toContain(`--ds-typography-${path.join('-')}-font-size`)
     }
+  })
+})
+
+describe('the split holds the two audiences apart', () => {
+  it('keeps every primitive out of tokens.css', () => {
+    const leaked = semantic.filter((d) => tierOf(d.name) !== 'semantic')
+    expect(leaked.map((d) => d.name)).toEqual([])
+  })
+
+  it('keeps every semantic token out of tokens.primitives.css', () => {
+    const leaked = primitive.filter((d) => tierOf(d.name) === 'semantic')
+    expect(leaked.map((d) => d.name)).toEqual([])
+  })
+
+  it('imports the primitives, so a caller cannot load half the chain', () => {
+    expect(tokensCss).toContain("@import './tokens.primitives.css';")
+  })
+
+  it('splits the DTCG documents on the same line, sharing no key', () => {
+    const overlap = Object.keys(json).filter(
+      (key) => !key.startsWith('$') && key in primitivesJson,
+    )
+    expect(overlap).toEqual([])
+    expect(Object.keys(primitivesJson).filter((k) => !k.startsWith('$'))).toEqual([
+      'brand',
+      'alias',
+    ])
   })
 })
 
@@ -100,9 +142,9 @@ describe('the three tiers keep their references', () => {
     }
   })
 
-  it('points the mapped colour tokens at Alias or Brand', () => {
+  it('points the semantic colour tokens at Alias or Brand', () => {
     const mapped = light.filter(
-      (d) => tierOf(d.name) === 'mapped' && !d.name.startsWith('--ds-typography-'),
+      (d) => tierOf(d.name) === 'semantic' && !d.name.startsWith('--ds-typography-'),
     )
     expect(mapped.length).toBeGreaterThan(400)
     for (const d of mapped) {
@@ -125,7 +167,7 @@ describe('dark mode', () => {
   })
 
   it('overrides nothing in Brand or Alias, so the primitives stay stable', () => {
-    for (const d of dark) expect(tierOf(d.name)).toBe('mapped')
+    for (const d of dark) expect(tierOf(d.name)).toBe('semantic')
   })
 
   it('applies by attribute and by system preference', () => {
@@ -137,7 +179,9 @@ describe('dark mode', () => {
 })
 
 describe('component CSS only consumes tokens', () => {
-  const files = cssFiles(SRC).filter((file) => file !== TOKENS_CSS)
+  const files = cssFiles(SRC).filter(
+    (file) => file !== TOKENS_CSS && file !== PRIMITIVES_CSS,
+  )
 
   it('finds stylesheets to check', () => {
     expect(files.length).toBeGreaterThan(0)
@@ -146,8 +190,14 @@ describe('component CSS only consumes tokens', () => {
   it.each(files)('%s references only declared tokens', (file) => {
     const used = [...readFileSync(file, 'utf8').matchAll(/var\((--ds-[\w-]+)/g)]
     for (const [, name] of used) {
-      expect(declared, `${name} is not declared in tokens.css`).toContain(name)
+      expect(declared, `${name} is not a token`).toContain(name)
     }
+  })
+
+  it.each(files)('%s reaches for no primitive', (file) => {
+    const used = [...readFileSync(file, 'utf8').matchAll(/var\((--ds-[\w-]+)/g)]
+    const primitives = used.map(([, name]) => name).filter((n) => tierOf(n) !== 'semantic')
+    expect(primitives, 'consume the semantic layer, not a raw primitive').toEqual([])
   })
 
   it('has no raw hex colour in Badge.css', () => {

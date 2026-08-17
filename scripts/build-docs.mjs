@@ -2,7 +2,7 @@
 /**
  * Fills the generated blocks in the agent-facing docs.
  *
- * The API tables come from badge.meta.ts and the token tables from tokens.json,
+ * The API tables come from badge.meta.ts and the token tables from the tokens,
  * so the terse rules an agent reads first can never disagree with the detailed
  * component doc. Prose outside the markers is hand-written and preserved.
  *
@@ -18,9 +18,16 @@ const SKILL_DIR = join(root, '.cursor/skills/delhivery-design-system')
 const { badgeMeta } = await import(
   join(root, 'src/Design System/Badge/badge.meta.ts')
 )
-const tokens = JSON.parse(
-  await readFile(join(root, 'src/Design System/tokens.json'), 'utf8'),
-)
+/** The two documents share no top-level key, so a shallow merge rejoins the
+ *  reference chain that splitting the primitives out broke. */
+const tokens = {
+  ...JSON.parse(
+    await readFile(join(root, 'src/Design System/tokens.primitives.json'), 'utf8'),
+  ),
+  ...JSON.parse(
+    await readFile(join(root, 'src/Design System/tokens.json'), 'utf8'),
+  ),
+}
 
 const code = (value) => `\`${value}\``
 /** Union values as separate code spans, so no pipe breaks the table. */
@@ -44,7 +51,7 @@ function leaves(node, path = []) {
   )
 }
 
-/** The mapped tier: everything that is neither a primitive nor an alias. */
+/** The semantic tier: everything that is neither a primitive nor an alias. */
 const MAPPED_GROUPS = entries(tokens).filter(
   ([key]) => !['brand', 'alias', 'typography'].includes(key),
 )
