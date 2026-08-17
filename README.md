@@ -59,9 +59,12 @@ src/Design System/
   tokens.css                  GENERATED, three tiers plus light and dark
   Badge/
     badge.meta.ts             source of truth for the public API
+    badge.figma.json          the component set's own bindings, from Figma
+    badge.spec.json           GENERATED, platform-neutral contract
     Badge.tsx / .types.ts / .css
     Badge.test.tsx            semantics: element, roles, aria, order
     badge.meta.test.ts        the metadata still describes the implementation
+    badge.spec.test.ts        the React build conforms to the spec
   tokens.test.ts              tokens are generated, and only tokens are used
 
 .cursor/skills/delhivery-design-system/
@@ -79,7 +82,7 @@ Two sources of truth, four consumers:
 | Source | Consumers |
 |---|---|
 | `variables.json` + `typography.json` | `tokens.json`, then `tokens.css`, `tokens.md` and the token tests |
-| `badge.meta.ts` | the props table in `components/badge.md`, the playground's Properties table, the drift tests |
+| `badge.meta.ts` + `badge.figma.json` | `badge.spec.json`, the props table in `components/badge.md`, the playground's Properties table, the drift tests |
 
 Design values come straight out of Figma. `variables.json` is the variables
 export, three collections deep: Brand holds the primitives, Alias names them,
@@ -91,6 +94,25 @@ the mapped tier rather than a second stylesheet.
 Text styles are not variables in Figma and are absent from that export, so
 `typography.json` is fetched from the REST API by
 `scripts/fetch-typography.mjs` and committed, which keeps the build offline.
+
+## The component spec
+
+`badge.spec.json` is a platform-neutral contract: the API, the anatomy, the
+geometry per size, all 45 variant-and-type colour pairings, the accessibility
+semantics, and a list of conformance statements. It holds decisions as data and
+semantics as declarations, never layout as code — token names rather than
+values, logical directions rather than left and right, and `slot` rather than
+`ReactNode` — so the same file can drive a Vue, SwiftUI or Compose
+implementation. Only the tokens and this contract are portable; each rendering
+model still writes its own implementation.
+
+What makes it more than documentation is where it comes from. The colour
+pairings are read out of the Figma component set's own variable bindings by
+`scripts/fetch-badge-figma.mjs`, so the spec is generated from the design rather
+than from this repo's code. `badge.spec.test.ts` then checks the React
+implementation against it, which means a designer rebinding a colour in Figma
+fails CI here rather than being noticed months later. Any other implementation
+would be validated by the equivalent of that one test file.
 
 Because the playground's interactive props table and the published props table
 are built from the same file, the documentation site cannot describe a prop the
@@ -123,8 +145,9 @@ names itself.
 |---|---|
 | `lint` | the usual |
 | `tokens:check` | `tokens.json` or `tokens.css` hand-edited, or a Figma export refreshed without regenerating |
+| `spec:check` | `badge.spec.json` stale against `badge.meta.ts` or the Figma bindings |
 | `docs:check` | docs stale against `badge.meta.ts` or `tokens.json` |
-| `test` | 43 tests: badge semantics, geometry, token discipline, metadata drift |
+| `test` | 77 tests: badge semantics, geometry, token discipline, metadata drift, spec conformance |
 | `build` | typecheck and bundle |
 | `eval:check` | the agent-generated screen still compiles against the real types |
 

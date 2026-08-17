@@ -7,6 +7,7 @@ import {
   BADGE_VARIANTS,
   badgeMeta,
 } from '../Design System/Badge/badge.meta'
+import badgeSpec from '../Design System/Badge/badge.spec.json'
 import { CodeBlock } from './CodeBlock'
 import { InfoCircleIcon, PlusCircleIcon } from './icons'
 
@@ -41,6 +42,47 @@ function buildCode(state: PlaygroundState) {
   if (state.leadingIcon) lines.push('  leadingIcon={<InfoCircleIcon />}')
   if (state.trailingIcon) lines.push('  trailingIcon={<PlusCircleIcon />}')
   return `<Badge\n${lines.join('\n')}\n/>`
+}
+
+/**
+ * The slice of badge.spec.json that describes the current selection.
+ *
+ * The whole spec is 400 lines and mostly the other 44 variant-and-type
+ * pairings, so showing all of it would bury the part being demonstrated. This
+ * narrows to the chosen combination, which is what another platform would read
+ * to implement exactly the badge above.
+ */
+function buildSpec(state: PlaygroundState) {
+  const ghost = state.type === 'ghost'
+  const parts = badgeSpec.anatomy.parts
+    .filter((part) => !(ghost && part.name === 'label'))
+    .filter((part) => 'always' in part || state[part.when as keyof PlaygroundState])
+    .map((part) => part.name)
+
+  return JSON.stringify(
+    {
+      interactive: badgeSpec.interactive,
+      anatomy: { container: badgeSpec.anatomy.container, parts },
+      layout: {
+        gap: badgeSpec.layout.gap,
+        cornerRadius: badgeSpec.layout.cornerRadius,
+        borderWidth: badgeSpec.layout.borderWidth,
+        ...badgeSpec.layout.bySize[state.size],
+      },
+      appearance: badgeSpec.appearance.byVariant[state.variant][state.type],
+      ...(ghost ? { behaviour: badgeSpec.behaviour.ghost } : {}),
+      accessibility: {
+        labelSource: badgeSpec.accessibility.labelSource,
+        decorativeParts: badgeSpec.accessibility.decorativeParts.filter((part) =>
+          parts.includes(part),
+        ),
+        ...(state.type === 'disabled' ? { disabled: true } : {}),
+        ...(ghost ? badgeSpec.accessibility.ghost : {}),
+      },
+    },
+    null,
+    2,
+  )
 }
 
 function Select<T extends string>({
@@ -219,6 +261,19 @@ export function PropertiesTab() {
 
         <div className="props__code">
           <CodeBlock code={buildCode(state)} />
+        </div>
+      </section>
+
+      <section className="section">
+        <h2 className="section__title">Spec</h2>
+        <p className="section__subtitle">
+          The same badge as a platform-neutral contract, narrowed to this
+          selection. Generated from the Figma component set, so the colours
+          below are the tokens design bound rather than ones chosen in code.
+        </p>
+
+        <div className="props__code">
+          <CodeBlock code={buildSpec(state)} />
         </div>
       </section>
     </>

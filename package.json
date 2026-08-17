@@ -14,9 +14,12 @@
     "tokens:check": "node scripts/build-tokens.mjs --check",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/build-docs.mjs --check",
+    "spec:build": "node scripts/build-spec.mjs",
+    "spec:fetch": "node scripts/fetch-badge-figma.mjs",
+    "spec:check": "node scripts/build-spec.mjs --check",
     "ds:component": "node scripts/ds-component.mjs",
     "eval:check": "tsc -p tsconfig.eval.json",
-    "verify": "npm run lint && npm run tokens:check && npm run docs:check && npm run test && npm run build && npm run eval:check"
+    "verify": "npm run lint && npm run tokens:check && npm run spec:check && npm run docs:check && npm run test && npm run build && npm run eval:check"
   },
   "dependencies": {
     "@fontsource/noto-sans": "^5.3.0",

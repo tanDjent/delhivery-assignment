@@ -1,0 +1,431 @@
+{
+  "$description": "GENERATED FILE — DO NOT EDIT. A platform-neutral contract for Badge, built from badge.meta.ts and badge.figma.json by scripts/build-spec.mjs. Token references are DTCG paths into tokens.json. Regenerate: npm run spec:build",
+  "name": "Badge",
+  "summary": "A compact, non-interactive marker for the status, category or count of the thing beside it.",
+  "source": {
+    "figmaComponentSet": "1821:9345"
+  },
+  "interactive": false,
+  "api": {
+    "label": {
+      "kind": "text",
+      "required": true,
+      "description": "Text shown inside the badge. A string rather than a node, to keep labels short."
+    },
+    "variant": {
+      "kind": "enum",
+      "values": [
+        "black",
+        "white",
+        "coal",
+        "dlvRed",
+        "info",
+        "success",
+        "warning",
+        "error",
+        "cardbox"
+      ],
+      "default": "black",
+      "description": "Colour intent. Semantic variants report state; the rest categorise."
+    },
+    "type": {
+      "kind": "enum",
+      "values": [
+        "solid",
+        "subtle",
+        "outlined",
+        "disabled",
+        "ghost"
+      ],
+      "default": "solid",
+      "description": "Visual emphasis. `ghost` is a loading placeholder, not a style choice."
+    },
+    "size": {
+      "kind": "enum",
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "default": "medium",
+      "description": "Height step. See the size table below."
+    },
+    "statusDot": {
+      "kind": "flag",
+      "default": false,
+      "description": "Shows a green presence dot before the leading icon, as for an online indicator."
+    },
+    "leadingIcon": {
+      "kind": "slot",
+      "accepts": "icon",
+      "description": "Icon before the label. Hidden from assistive technology, so it must reinforce the label rather than replace it."
+    },
+    "trailingIcon": {
+      "kind": "slot",
+      "accepts": "icon",
+      "description": "Icon after the label. Also hidden from assistive technology."
+    }
+  },
+  "anatomy": {
+    "container": {
+      "layout": "row",
+      "align": "center",
+      "focusable": false
+    },
+    "parts": [
+      {
+        "name": "statusDot",
+        "when": "statusDot",
+        "decorative": true
+      },
+      {
+        "name": "leadingIcon",
+        "when": "leadingIcon",
+        "decorative": true
+      },
+      {
+        "name": "label",
+        "always": true,
+        "source": "label"
+      },
+      {
+        "name": "trailingIcon",
+        "when": "trailingIcon",
+        "decorative": true
+      }
+    ]
+  },
+  "layout": {
+    "gap": "{spacing.2}",
+    "cornerRadius": "{radius.default}",
+    "borderWidth": "{stroke.default}",
+    "bySize": {
+      "small": {
+        "height": 20,
+        "paddingInline": "{spacing.4}",
+        "paddingBlock": "{spacing.4}",
+        "textStyle": "{typography.c2.caption2_default}",
+        "iconSize": 12,
+        "dotSize": 4
+      },
+      "medium": {
+        "height": 24,
+        "paddingInline": "{spacing.6}",
+        "paddingBlock": "{spacing.6}",
+        "textStyle": "{typography.c2.caption2_default}",
+        "iconSize": 12,
+        "dotSize": 4
+      },
+      "large": {
+        "height": 28,
+        "paddingInline": "{spacing.6}",
+        "paddingBlock": "{spacing.6}",
+        "textStyle": "{typography.c1.caption1_default}",
+        "iconSize": 16,
+        "dotSize": 6
+      }
+    }
+  },
+  "appearance": {
+    "slots": [
+      "background",
+      "foreground",
+      "border"
+    ],
+    "byVariant": {
+      "black": {
+        "solid": {
+          "background": "{surface.bg_primary_inverse.default}",
+          "foreground": "{text.body_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_primary.strongest}",
+          "foreground": "{text.body.primary}",
+          "border": "{border.neutral.tertiary}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.body.primary}",
+          "border": "{border.neutral_inverse.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.body.disabled}",
+          "border": "{border.neutral.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "white": {
+        "solid": {
+          "background": "{surface.bg_primary.default}",
+          "foreground": "{text.body.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_primary.subtle}",
+          "foreground": "{text.body.primary}",
+          "border": "{border.neutral.tertiary}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.heading_inverse.primary}",
+          "border": "{border.neutral.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.body_inverse.disabled}",
+          "border": "{border.neutral_inverse.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "coal": {
+        "solid": {
+          "background": "{surface.bg_coal.default}",
+          "foreground": "{text.heading_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_coal.subtle}",
+          "foreground": "{text.body.primary}",
+          "border": "{border.coal.primary}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.coal.primary}",
+          "border": "{border.coal.tertiary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.coal.disabled}",
+          "border": "{border.neutral.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "dlvRed": {
+        "solid": {
+          "background": "{surface.bg_dlv_red.default}",
+          "foreground": "{text.heading_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_dlv_red.weaker}",
+          "foreground": "{text.accent.secondary}",
+          "border": "{border.dlv_red.base}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.accent.primary}",
+          "border": "{border.dlv_red.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.accent.disabled}",
+          "border": "{border.dlv_red.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "info": {
+        "solid": {
+          "background": "{surface.bg_blue.default}",
+          "foreground": "{text.heading_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_blue.weaker}",
+          "foreground": "{text.info_blue.primary}",
+          "border": "{border.info.primary}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.info_blue.primary}",
+          "border": "{border.info.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.info_blue.disabled}",
+          "border": "{border.info.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "success": {
+        "solid": {
+          "background": "{surface.bg_success.default}",
+          "foreground": "{text.heading_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_success.weaker}",
+          "foreground": "{text.success.primary}",
+          "border": "{border.success.base}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.success.primary}",
+          "border": "{border.success.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.success.disabled}",
+          "border": "{border.success.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "warning": {
+        "solid": {
+          "background": "{surface.bg_warning.default}",
+          "foreground": "{text.warning.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_warning.weaker}",
+          "foreground": "{text.warning.primary}",
+          "border": "{border.warning.base}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.warning.primary}",
+          "border": "{border.warning.tertiary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.warning.disabled}",
+          "border": "{border.warning.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "error": {
+        "solid": {
+          "background": "{surface.bg_error.default}",
+          "foreground": "{text.body_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_error.weaker}",
+          "foreground": "{text.error.primary}",
+          "border": "{border.error.base}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.error.primary}",
+          "border": "{border.error.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.error.disabled}",
+          "border": "{border.error.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      },
+      "cardbox": {
+        "solid": {
+          "background": "{surface.bg_cardbox.default}",
+          "foreground": "{text.body_inverse.primary}",
+          "border": "match-background"
+        },
+        "subtle": {
+          "background": "{surface.bg_cardbox.weaker}",
+          "foreground": "{text.cardbox.tertiary}",
+          "border": "{border.cardbox.base}"
+        },
+        "outlined": {
+          "background": "transparent",
+          "foreground": "{text.cardbox.primary}",
+          "border": "{border.cardbox.primary}"
+        },
+        "disabled": {
+          "background": "transparent",
+          "foreground": "{text.cardbox.disabled}",
+          "border": "{border.cardbox.disabled}"
+        },
+        "ghost": {
+          "background": "{surface.bg_primary.solid}",
+          "foreground": "inherit",
+          "border": "none"
+        }
+      }
+    }
+  },
+  "behaviour": {
+    "ghost": {
+      "rendersLabel": false,
+      "animation": {
+        "name": "shimmer",
+        "durationMs": 1400,
+        "respectsReducedMotion": true
+      }
+    }
+  },
+  "accessibility": {
+    "labelSource": "label",
+    "decorativeParts": [
+      "statusDot",
+      "leadingIcon",
+      "trailingIcon"
+    ],
+    "disabledWhen": "type == 'disabled'",
+    "ghost": {
+      "hiddenFromAssistiveTech": true,
+      "announcedBy": "the surrounding loading region"
+    }
+  },
+  "constraints": [
+    {
+      "absent": "onClick",
+      "reason": "Badges are never interactive. Use a button or link beside the badge."
+    },
+    {
+      "absent": "fullWidth",
+      "reason": "A badge sizes to its label; stretching it reads as a banner."
+    },
+    {
+      "absent": "truncate",
+      "reason": "A label that needs truncating is too long. Shorten it to one or two words."
+    },
+    {
+      "absent": "disabled",
+      "reason": "Disabled is a `type`, not a flag. It replaces the colours rather than dimming them, so it cannot combine with `solid` or `subtle`."
+    }
+  ],
+  "conformance": [
+    "the rendered height equals layout.bySize[size].height",
+    "the container exposes no tap or click target and is not focusable",
+    "decorative parts are absent from the accessibility tree",
+    "the accessible name equals the label input",
+    "type 'disabled' is exposed as disabled to assistive technology",
+    "type 'ghost' renders no label and is hidden from assistive technology",
+    "every colour comes from the token named in appearance, never a literal"
+  ]
+}

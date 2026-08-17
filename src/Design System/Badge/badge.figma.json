@@ -1,0 +1,305 @@
+{
+  "$description": "GENERATED FROM FIGMA — the Badge component set’s own variable bindings. Regenerate with: FIGMA_TOKEN=... node scripts/fetch-badge-figma.mjs. Consumed by scripts/build-spec.mjs.",
+  "figmaFileKey": "TYR1QoZKa0Hw3s9MSvFDG2",
+  "componentSetId": "1821:9345",
+  "extractedAt": "2026-08-16",
+  "axes": {
+    "variant": [
+      "black",
+      "white",
+      "coal",
+      "dlvRed",
+      "info",
+      "success",
+      "warning",
+      "error",
+      "cardbox"
+    ],
+    "size": [
+      "large",
+      "medium",
+      "small"
+    ],
+    "type": [
+      "solid",
+      "subtle",
+      "outlined",
+      "disabled",
+      "ghost"
+    ]
+  },
+  "geometry": {
+    "large": {
+      "height": 28,
+      "padding": 6,
+      "gap": 2,
+      "cornerRadius": 4,
+      "iconSize": 16,
+      "dotSize": 6,
+      "textStyle": "C1/caption1_default"
+    },
+    "medium": {
+      "height": 24,
+      "padding": 6,
+      "gap": 2,
+      "cornerRadius": 4,
+      "iconSize": 12,
+      "dotSize": 4,
+      "textStyle": "C2/caption2_default"
+    },
+    "small": {
+      "height": 20,
+      "padding": 4,
+      "gap": 2,
+      "cornerRadius": 4,
+      "iconSize": 12,
+      "dotSize": 4,
+      "textStyle": "C2/caption2_default"
+    }
+  },
+  "appearance": {
+    "black": {
+      "solid": {
+        "background": "{surface.bg_primary_inverse.default}",
+        "foreground": "{text.body_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_primary.strongest}",
+        "foreground": "{text.body.primary}",
+        "border": "{border.neutral.tertiary}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.body.primary}",
+        "border": "{border.neutral_inverse.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.body.disabled}",
+        "border": "{border.neutral.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "white": {
+      "solid": {
+        "background": "{surface.bg_primary.default}",
+        "foreground": "{text.body.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_primary.subtle}",
+        "foreground": "{text.body.primary}",
+        "border": "{border.neutral.tertiary}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.heading_inverse.primary}",
+        "border": "{border.neutral.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.body_inverse.disabled}",
+        "border": "{border.neutral_inverse.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "coal": {
+      "solid": {
+        "background": "{surface.bg_coal.default}",
+        "foreground": "{text.heading_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_coal.subtle}",
+        "foreground": "{text.body.primary}",
+        "border": "{border.coal.primary}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.coal.primary}",
+        "border": "{border.coal.tertiary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.coal.disabled}",
+        "border": "{border.neutral.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "dlvRed": {
+      "solid": {
+        "background": "{surface.bg_dlv_red.default}",
+        "foreground": "{text.heading_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_dlv_red.weaker}",
+        "foreground": "{text.accent.secondary}",
+        "border": "{border.dlv_red.base}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.accent.primary}",
+        "border": "{border.dlv_red.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.accent.disabled}",
+        "border": "{border.dlv_red.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "info": {
+      "solid": {
+        "background": "{surface.bg_blue.default}",
+        "foreground": "{text.heading_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_blue.weaker}",
+        "foreground": "{text.info_blue.primary}",
+        "border": "{border.info.primary}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.info_blue.primary}",
+        "border": "{border.info.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.info_blue.disabled}",
+        "border": "{border.info.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "success": {
+      "solid": {
+        "background": "{surface.bg_success.default}",
+        "foreground": "{text.heading_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_success.weaker}",
+        "foreground": "{text.success.primary}",
+        "border": "{border.success.base}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.success.primary}",
+        "border": "{border.success.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.success.disabled}",
+        "border": "{border.success.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "warning": {
+      "solid": {
+        "background": "{surface.bg_warning.default}",
+        "foreground": "{text.warning.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_warning.weaker}",
+        "foreground": "{text.warning.primary}",
+        "border": "{border.warning.base}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.warning.primary}",
+        "border": "{border.warning.tertiary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.warning.disabled}",
+        "border": "{border.warning.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "error": {
+      "solid": {
+        "background": "{surface.bg_error.default}",
+        "foreground": "{text.body_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_error.weaker}",
+        "foreground": "{text.error.primary}",
+        "border": "{border.error.base}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.error.primary}",
+        "border": "{border.error.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.error.disabled}",
+        "border": "{border.error.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    },
+    "cardbox": {
+      "solid": {
+        "background": "{surface.bg_cardbox.default}",
+        "foreground": "{text.body_inverse.primary}",
+        "border": null
+      },
+      "subtle": {
+        "background": "{surface.bg_cardbox.weaker}",
+        "foreground": "{text.cardbox.tertiary}",
+        "border": "{border.cardbox.base}"
+      },
+      "outlined": {
+        "background": null,
+        "foreground": "{text.cardbox.primary}",
+        "border": "{border.cardbox.primary}"
+      },
+      "disabled": {
+        "background": null,
+        "foreground": "{text.cardbox.disabled}",
+        "border": "{border.cardbox.disabled}"
+      },
+      "ghost": {
+        "background": "{surface.bg_primary.solid}",
+        "foreground": null,
+        "border": null
+      }
+    }
+  }
+}

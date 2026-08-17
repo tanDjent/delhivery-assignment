@@ -26,6 +26,11 @@ jobs:
       - name: Tokens are in sync with tokens.json
         run: npm run tokens:check
 
+      # The spec is built from Figma, so this fails when design changes and the
+      # component has not followed.
+      - name: Spec is in sync with the Figma component set
+        run: npm run spec:check
+
       - name: Docs are in sync with the component metadata
         run: npm run docs:check
 

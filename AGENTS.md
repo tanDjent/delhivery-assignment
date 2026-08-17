@@ -32,6 +32,7 @@ npm run verify     # lint + drift + test + build + agent eval typecheck
 | File | Source | Regenerate |
 |---|---|---|
 | `src/Design System/tokens.json` and `tokens.css` | `variables.json`, `typography.json` (Figma exports) and `legacy-tokens.json` | `npm run tokens:build` |
+| `Badge/badge.spec.json` | `badge.meta.ts` and `badge.figma.json` (Figma export) | `npm run spec:build` |
 | Generated blocks in the skill docs | `*.meta.ts`, `tokens.json` | `npm run docs:build` |
 
 `npm run verify` fails if either has drifted, so change the source, not the
