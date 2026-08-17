@@ -44,9 +44,9 @@ function leaves(node, path = []) {
   )
 }
 
-/** The mapped tier: everything that isn't a primitive, an alias or legacy. */
+/** The mapped tier: everything that is neither a primitive nor an alias. */
 const MAPPED_GROUPS = entries(tokens).filter(
-  ([key]) => !['brand', 'alias', 'legacy', 'typography'].includes(key),
+  ([key]) => !['brand', 'alias', 'typography'].includes(key),
 )
 
 const mappedGroups = () =>

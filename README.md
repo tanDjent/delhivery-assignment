@@ -54,7 +54,6 @@ or it will eventually lie.**
 src/Design System/
   variables.json              Figma variables export: Brand, Alias, DLV_Mapped
   typography.json             Figma text styles, fetched separately (see below)
-  legacy-tokens.json          pre-Figma tokens, kept until components are remapped
   tokens.json                 GENERATED, DTCG format
   tokens.css                  GENERATED, three tiers plus light and dark
   Badge/
@@ -94,6 +93,13 @@ the mapped tier rather than a second stylesheet.
 Text styles are not variables in Figma and are absent from that export, so
 `typography.json` is fetched from the REST API by
 `scripts/fetch-typography.mjs` and committed, which keeps the build offline.
+
+Nothing else feeds the tokens. An earlier hand-authored set survived the
+migration for a while so components kept rendering mid-remap, and it is now
+gone: the Badge, the documentation site's own chrome and the page defaults all
+read the mapped tier. Because the token tests fail on a `var()` that resolves to
+nothing, deleting those names was enough to prove no stylesheet still wanted
+them.
 
 ## The component spec
 

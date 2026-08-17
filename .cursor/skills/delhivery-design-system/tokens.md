@@ -135,9 +135,12 @@ currently bundled — avoid them until it is.
 | `--ds-typography-utility-label` | IBM Plex Sans | 14px | 500 | 20px |
 <!-- /GENERATED:typography -->
 
-## Legacy names
+## Removed names
 
-`--ds-space-*`, `--ds-variant-*`, `--ds-color-*`, `--ds-radius-sm|md|full` and
-`--ds-font-*` predate the Figma export. They still resolve so that existing
-components keep rendering, but they are being migrated away. Do not use them in
-new work.
+An earlier hand-authored set — `--ds-space-*`, `--ds-variant-*`, `--ds-color-*`,
+`--ds-radius-sm|md|full`, `--ds-font-*`, `--ds-duration-*` and `--ds-easing-*` —
+predated the Figma export and no longer exists. Every one of them has a mapped
+equivalent above: `--ds-space-8` is `--ds-spacing-8`, `--ds-radius-md` is
+`--ds-radius-default`, and a colour resolves to whichever of `surface`, `text`,
+`icon` or `border` matches the property it is set on. The token tests fail on a
+`var()` that resolves to nothing, so a stale name cannot survive a build.

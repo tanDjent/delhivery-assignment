@@ -26,21 +26,6 @@ const declared = new Set(light.map((d) => d.name))
 const reference = (value: string) =>
   /^var\((--ds-[\w-]+)\)$/.exec(value)?.[1] ?? null
 
-/** Pre-Figma names, kept resolving while components are remapped. */
-const LEGACY_PREFIXES = [
-  '--ds-space-',
-  '--ds-variant-',
-  '--ds-color-',
-  '--ds-font-',
-  '--ds-status-dot-',
-  '--ds-duration-',
-  '--ds-easing-',
-  '--ds-border-width',
-  '--ds-radius-sm',
-  '--ds-radius-md',
-  '--ds-radius-full',
-]
-
 const tierOf = (name: string) =>
   name.startsWith('--ds-brand-')
     ? 'brand'
@@ -117,11 +102,7 @@ describe('the three tiers keep their references', () => {
 
   it('points the mapped colour tokens at Alias or Brand', () => {
     const mapped = light.filter(
-      (d) =>
-        tierOf(d.name) === 'mapped' &&
-        !d.name.startsWith('--ds-typography-') &&
-        // Legacy names predate the export and are literal by design.
-        !LEGACY_PREFIXES.some((prefix) => d.name.startsWith(prefix)),
+      (d) => tierOf(d.name) === 'mapped' && !d.name.startsWith('--ds-typography-'),
     )
     expect(mapped.length).toBeGreaterThan(400)
     for (const d of mapped) {
@@ -179,7 +160,7 @@ describe('component CSS only consumes tokens', () => {
     const spacing = [...badgeCss.matchAll(/^\s+(?:padding|gap|margin):\s*(.+);$/gm)]
     for (const [, value] of spacing) {
       expect(value, `${value} is not a spacing token`).toMatch(
-        /^var\(--ds-(?:space|spacing)-[\d.]+\)$/,
+        /^var\(--ds-spacing-[\d.]+\)$/,
       )
     }
   })

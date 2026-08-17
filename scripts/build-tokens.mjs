@@ -13,10 +13,6 @@
  * typography.json is separate because Figma text styles are not variables and
  * never appear in a variables export.
  *
- * legacy-tokens.json is the hand-authored set that predates the export. Its
- * names are emitted verbatim so existing components keep rendering until they
- * are remapped; it is temporary.
- *
  * Run with --check in CI to fail when a generated file has drifted.
  */
 import { readFile, writeFile } from 'node:fs/promises'
@@ -28,7 +24,6 @@ const DS = join(root, 'src/Design System')
 
 const VARIABLES = join(DS, 'variables.json')
 const TYPOGRAPHY = join(DS, 'typography.json')
-const LEGACY = join(DS, 'legacy-tokens.json')
 const TOKENS_JSON = join(DS, 'tokens.json')
 const TOKENS_CSS = join(DS, 'tokens.css')
 
@@ -76,7 +71,6 @@ const ref = (path) => `{${path.join('.')}}`
 
 const variables = JSON.parse(await readFile(VARIABLES, 'utf8'))
 const typography = JSON.parse(await readFile(TYPOGRAPHY, 'utf8'))
-const legacy = JSON.parse(await readFile(LEGACY, 'utf8'))
 
 const collection = (name) =>
   variables.collections.find((c) => c.name.trim() === name)
@@ -180,11 +174,10 @@ const setPath = (target, path, value) => {
 
 const tokens = {
   $description:
-    'GENERATED FILE — DO NOT EDIT. Built from variables.json, typography.json and legacy-tokens.json by scripts/build-tokens.mjs. DTCG format, so the tokens are consumable outside CSS. Names mirror Figma: Surface/BG_Primary/Default becomes surface.bg_primary.default.',
+    'GENERATED FILE — DO NOT EDIT. Built from variables.json and typography.json by scripts/build-tokens.mjs. DTCG format, so the tokens are consumable outside CSS. Names mirror Figma: Surface/BG_Primary/Default becomes surface.bg_primary.default.',
   $source: {
     variables: 'variables.json',
     typography: 'typography.json',
-    legacy: 'legacy-tokens.json',
     regenerate: 'npm run tokens:build',
   },
 }
@@ -264,36 +257,6 @@ for (const variable of BRAND.variables) {
   })
 }
 
-// Legacy, emitted verbatim so existing component CSS keeps resolving.
-const legacyCss = []
-const legacyEntries = (group) =>
-  Object.entries(group).filter(([key]) => !key.startsWith('$'))
-
-for (const [key, token] of legacyEntries(legacy.space))
-  legacyCss.push(`  --ds-space-${key}: ${token.$value};`)
-for (const [name, pair] of legacyEntries(legacy.variant)) {
-  const kebab = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
-  legacyCss.push(
-    `  --ds-variant-${kebab}-bg: ${pair.background.$value};`,
-    `  --ds-variant-${kebab}-text: ${pair.text.$value};`,
-  )
-}
-legacyCss.push(`  --ds-status-dot-color: ${legacy.statusDot.color.$value};`)
-for (const [key, token] of legacyEntries(legacy.color))
-  legacyCss.push(`  --ds-color-${key}: ${token.$value};`)
-legacyCss.push(`  --ds-font-family: ${legacy.font.family.$value};`)
-for (const [key, token] of legacyEntries(legacy.font.weight))
-  legacyCss.push(`  --ds-font-weight-${key}: ${token.$value};`)
-for (const [key, token] of legacyEntries(legacy.radius))
-  legacyCss.push(`  --ds-radius-${key}: ${token.$value};`)
-legacyCss.push(`  --ds-border-width: ${legacy.border.width.$value};`)
-legacyCss.push(`  --ds-duration-fast: ${legacy.duration.fast.$value};`)
-legacyCss.push(`  --ds-easing-standard: ${legacy.easing.standard.$value};`)
-
-tokens.legacy = Object.fromEntries(
-  Object.entries(legacy).filter(([key]) => key !== '$description'),
-)
-
 // --------------------------------------------------------------- tokens.css ---
 
 const section = (title, lines) =>
@@ -330,8 +293,7 @@ const mappedLines = cssBlocks.light.filter(
 const css = `/**
  * GENERATED FILE — DO NOT EDIT.
  *
- * Source: variables.json (Figma variables), typography.json (Figma text
- * styles), legacy-tokens.json (pre-Figma tokens, temporary).
+ * Source: variables.json (Figma variables), typography.json (Figma text styles).
  * Regenerate: npm run tokens:build
  *
  * Three tiers, mirroring the Figma collections. Brand holds the primitives,
@@ -353,8 +315,6 @@ ${section('Mapped — the layer components consume (Light)', grouped(mappedLines
 ${section('Typography — Figma text styles', typographyCss)}
 
 ${section('Font weights as numbers', weightCss)}
-
-${section('Legacy — pre-Figma names, being migrated away', legacyCss)}
 }
 
 /* Dark mode overrides only the mapped tokens whose value differs. */
@@ -394,7 +354,7 @@ for (const target of targets) {
 if (drifted) process.exit(1)
 if (CHECK) console.log('Token files are up to date.')
 else {
-  const count = cssBlocks.light.length + typographyCss.length + legacyCss.length
+  const count = cssBlocks.light.length + typographyCss.length + weightCss.length
   console.log(
     `${count} custom properties (${cssBlocks.dark.length} dark overrides), ${Object.keys(typography.styles).length} text styles`,
   )

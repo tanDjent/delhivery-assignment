@@ -22,6 +22,13 @@ which files it read, and its report is in [run-1/report.md](run-1/report.md).
 Its output is committed unedited as [run-1/](run-1/), including a lint warning I
 deliberately did not fix.
 
+That run predates the move to the Figma-generated tokens, so `run-1/ShipmentList.css`
+still spells the token names the way the docs did at the time — `--ds-space-8`
+rather than `--ds-spacing-8`, and `--ds-color-*` rather than `surface`, `text` and
+`border`. Those names no longer resolve. Editing the file would make it a worse
+record of what the agent produced, so it stands as written; the fix is a re-run
+against the current docs, not a patch.
+
 ## Grade
 
 Mechanical checks — `npm run eval:check` typechecks the output against the real

@@ -31,7 +31,7 @@ npm run verify     # lint + drift + test + build + agent eval typecheck
 
 | File | Source | Regenerate |
 |---|---|---|
-| `src/Design System/tokens.json` and `tokens.css` | `variables.json`, `typography.json` (Figma exports) and `legacy-tokens.json` | `npm run tokens:build` |
+| `src/Design System/tokens.json` and `tokens.css` | `variables.json` and `typography.json` (Figma exports) | `npm run tokens:build` |
 | `Badge/badge.spec.json` | `badge.meta.ts` and `badge.figma.json` (Figma export) | `npm run spec:build` |
 | Generated blocks in the skill docs | `*.meta.ts`, `tokens.json` | `npm run docs:build` |
 
@@ -41,7 +41,7 @@ output.
 ## Rules
 
 - **No colour value outside the tokens**, and padding, gap, margin and radius
-  always come from `var(--ds-space-*)` / `var(--ds-radius-*)`. Tests enforce both.
+  always come from `var(--ds-spacing-*)` / `var(--ds-radius-*)`. Tests enforce both.
 - **A value used by one component belongs to that component**, not to
   `tokens.json`. A fixed height or a 6px dot is a literal in the component's CSS;
   it is not a shared token.

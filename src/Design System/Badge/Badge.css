@@ -148,8 +148,8 @@
     var(--ds-surface-bg_primary-solid) 80%
   );
   background-size: 200% 100%;
-  /* Figma defines no motion tokens, so this is the one legacy name left. */
-  animation: ds-badge-shimmer 1.4s var(--ds-easing-standard) infinite;
+  /* Figma defines no motion tokens, so the curve is this component's own. */
+  animation: ds-badge-shimmer 1.4s cubic-bezier(0.2, 0, 0.2, 1) infinite;
 }
 
 @keyframes ds-badge-shimmer {

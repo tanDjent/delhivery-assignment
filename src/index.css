@@ -6,11 +6,11 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--ds-font-family);
+  font-family: var(--ds-typography-b1-body1_default-font-family);
   font-size: 15px;
   line-height: 1.55;
-  color: var(--ds-color-black);
-  background: var(--ds-color-white);
+  color: var(--ds-text-heading-primary);
+  background: var(--ds-surface-bg_primary-default);
 }
 
 *,
