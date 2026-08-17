@@ -238,6 +238,60 @@ developer happens to use:
 3. **The command.** `npm run ds:component -- badge` prints the doc, for agents,
    editors and CI jobs that know nothing about skills.
 
+## Shipping it to the teams that use it
+
+In production the design system is a package, and the documentation is *inside*
+the package rather than on a wiki beside it:
+
+```
+@delhivery/badge-react/
+  dist/                     the component
+  tokens/                   tokens.css, tokens.json
+  badge.spec.json           the description the other platforms are generated from
+  agent/
+    SKILL.md                the index and the rules
+    components/badge.md     the full doc
+    AGENTS.md               the block a consuming app folds into its own
+```
+
+One version number covers the code and the guidance together.
+`@delhivery/badge-vue`, and the SwiftUI and Compose packages, are generated from
+the same `badge.spec.json`, so each one ships the same guidance with the examples
+written in its own language.
+
+An app installs the package and runs one command to put those files where its
+agent already looks:
+
+```
+npx @delhivery/ds sync-agents          # and --check in CI
+```
+
+That copies the skill into the app's `.cursor/skills/` and rewrites a single
+marked block inside the app's own `AGENTS.md` — the same `<!-- GENERATED -->`
+markers this repo uses on its own files. The app's rules are left untouched and
+only the design system's section is replaced.
+
+Doing it this way is what ties the docs to the version. The guidance an agent
+reads is written by the package that is installed, so it cannot describe a prop
+that version doesn't have. An upgrade becomes one pull request in which the
+version bump and the changed documentation appear in the same diff: a removed
+prop or a renamed variant shows up as a line of prose changing, which the
+reviewer sees and the next agent to work in that repo reads. Anything the upgrade
+asks of a human rides along in the same file — a "Migrating from 3.x" heading in
+`badge.md` is read by the very agent doing the migration. Running the sync with
+`--check` in the app's CI fails a bump that was made without re-syncing, instead
+of quietly leaving the agent a version behind.
+
+Eighty components don't make the always-loaded file eighty times longer. The
+generated index in `AGENTS.md` carries one line each, and a full doc is fetched
+only when a task touches that component, which is why the skill is an index plus
+one file per component rather than one long document.
+
+What is built here is the source half of that: the generators, the drift checks,
+and the docs already in the shape a package would publish. The publish pipeline
+and the `sync-agents` CLI are what a real system adds around them, and neither
+changes how anything above is written.
+
 ## What gets checked
 
 `npm run verify` runs everything below, and is what the skill tells an agent to
